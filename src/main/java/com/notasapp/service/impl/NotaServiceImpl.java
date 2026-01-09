@@ -41,7 +41,7 @@ public class NotaServiceImpl implements I_NotaService {
         if (notaDTO.getCategoriaIds() != null && !notaDTO.getCategoriaIds().isEmpty()) {
             Set<Categoria> categorias = new HashSet<>();
             for (Long categoriaId : notaDTO.getCategoriaIds()) {
-                Categoria categoria = categoriaRepository.findByIdAndUsuario(categoriaId, usuario)
+                Categoria categoria = categoriaRepository.findById(categoriaId)
                         .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
                 categorias.add(categoria);
             }
@@ -70,7 +70,7 @@ public class NotaServiceImpl implements I_NotaService {
         if (notaDTO.getCategoriaIds() != null) {
             Set<Categoria> categorias = new HashSet<>();
             for (Long categoriaId : notaDTO.getCategoriaIds()) {
-                Categoria categoria = categoriaRepository.findByIdAndUsuario(categoriaId, usuario)
+                Categoria categoria = categoriaRepository.findById(categoriaId)
                         .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
                 categorias.add(categoria);
             }

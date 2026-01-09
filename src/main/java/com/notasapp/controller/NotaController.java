@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/notas")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class NotaController {
 
     private final I_NotaService notaService;

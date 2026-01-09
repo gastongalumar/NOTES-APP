@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/categorias")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class CategoriaController {
 
     private final I_CategoriaService categoriaService;

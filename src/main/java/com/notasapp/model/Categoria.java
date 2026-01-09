@@ -12,27 +12,33 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nombre;
 
+    @Column(nullable = false)
     private String color;
 
-    @ManyToMany(mappedBy = "categorias")
+    @Column(length = 500)
+    private String descripcion;
+
+    @ManyToMany(mappedBy = "categorias", fetch = FetchType.LAZY)
     private Set<Nota> notas = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
-
-    // Constructor vacío
+    // Constructor vacío (obligatorio para JPA)
     public Categoria() {
     }
 
-    // Constructor con parámetros
-    public Categoria(String nombre, String color, Usuario usuario) {
+    // Constructor con parámetros básicos
+    public Categoria(String nombre, String color) {
         this.nombre = nombre;
         this.color = color;
-        this.usuario = usuario;
+    }
+
+    // Constructor con todos los parámetros
+    public Categoria(String nombre, String color, String descripcion) {
+        this.nombre = nombre;
+        this.color = color;
+        this.descripcion = descripcion;
     }
 
     // ========== GETTERS Y SETTERS ==========
@@ -61,6 +67,14 @@ public class Categoria {
         this.color = color;
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     public Set<Nota> getNotas() {
         return notas;
     }
@@ -69,11 +83,61 @@ public class Categoria {
         this.notas = notas;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    // ========== MÉTODOS DE CONVENIENCIA ==========
+
+    /**
+     * Método para agregar una nota a la categoría
+     * Mantiene la consistencia bidireccional
+     */
+    public void agregarNota(Nota nota) {
+        this.notas.add(nota);
+        nota.getCategorias().add(this);
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    /**
+     * Método para remover una nota de la categoría
+     * Mantiene la consistencia bidireccional
+     */
+    public void removerNota(Nota nota) {
+        this.notas.remove(nota);
+        nota.getCategorias().remove(this);
+    }
+
+    // ========== EQUALS Y HASHCODE ==========
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Categoria)) return false;
+
+        Categoria categoria = (Categoria) o;
+
+        // Usamos id para equals si está persistido
+        if (id != null) {
+            return id.equals(categoria.id);
+        }
+
+        // Si no tiene id, usamos nombre (debe ser único)
+        return nombre != null && nombre.equals(categoria.nombre);
+    }
+
+    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.hashCode();
+        }
+        return nombre != null ? nombre.hashCode() : 0;
+    }
+
+    // ========== TO STRING ==========
+
+    @Override
+    public String toString() {
+        return "Categoria{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", color='" + color + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                '}';
     }
 }

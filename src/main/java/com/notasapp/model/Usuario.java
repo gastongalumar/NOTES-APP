@@ -31,10 +31,11 @@ public class Usuario implements UserDetails {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Nota> notas = new HashSet<>();
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Categoria> categorias = new HashSet<>();
+    // ❌ ELIMINA ESTA RELACIÓN (ya que Categoria no tiene usuario)
+    // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // private Set<Categoria> categorias = new HashSet<>();
 
-    // Constructor vacío (obligatorio para JPA)
+    // Constructor vacío
     public Usuario() {
     }
 
@@ -47,64 +48,30 @@ public class Usuario implements UserDetails {
 
     // ========== GETTERS Y SETTERS ==========
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
     @Override
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+    public boolean isEnabled() { return enabled; }
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+    public Set<Nota> getNotas() { return notas; }
+    public void setNotas(Set<Nota> notas) { this.notas = notas; }
 
-    public Set<Nota> getNotas() {
-        return notas;
-    }
-
-    public void setNotas(Set<Nota> notas) {
-        this.notas = notas;
-    }
-
-    public Set<Categoria> getCategorias() {
-        return categorias;
-    }
-
-    public void setCategorias(Set<Categoria> categorias) {
-        this.categorias = categorias;
-    }
+    // ❌ ELIMINA estos getters/setters:
+    // public Set<Categoria> getCategorias() { return categorias; }
+    // public void setCategorias(Set<Categoria> categorias) { this.categorias = categorias; }
 
     // ========== MÉTODOS DE UserDetails ==========
 
@@ -114,17 +81,11 @@ public class Usuario implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 }

@@ -1,13 +1,9 @@
 package com.notasapp.controller;
 
 import com.notasapp.dto.CategoriaDTO;
-import com.notasapp.model.Usuario;
 import com.notasapp.service.I_CategoriaService;
-import com.notasapp.service.I_UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -16,76 +12,57 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/categorias")
-//@CrossOrigin(origins = "*")
 public class CategoriaController {
 
     private final I_CategoriaService categoriaService;
-    private final I_UsuarioService usuarioService;
 
-    public CategoriaController(I_CategoriaService categoriaService,
-                               I_UsuarioService usuarioService) {
+    public CategoriaController(I_CategoriaService categoriaService) {
         this.categoriaService = categoriaService;
-        this.usuarioService = usuarioService;
     }
 
-    private Usuario obtenerUsuarioActual(UserDetails userDetails) {
-        return usuarioService.obtenerUsuarioPorUsername(userDetails.getUsername());
-    }
-
-    // GET: Listar todas las categorías del usuario
+    // GET: Listar todas las categorías (mismo endpoint)
     @GetMapping
-    public ResponseEntity<List<CategoriaDTO>> listarCategorias(@AuthenticationPrincipal UserDetails userDetails) {
-        Usuario usuario = obtenerUsuarioActual(userDetails);
-        List<CategoriaDTO> categorias = categoriaService.obtenerCategorias(usuario);
+    public ResponseEntity<List<CategoriaDTO>> listarCategorias() {
+        List<CategoriaDTO> categorias = categoriaService.obtenerTodasLasCategorias();
         return ResponseEntity.ok(categorias);
     }
 
-    // GET: Obtener categoría por ID
+    // GET: Obtener categoría por ID (mismo endpoint)
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaDTO> obtenerCategoria(@PathVariable Long id,
-                                                         @AuthenticationPrincipal UserDetails userDetails) {
-        Usuario usuario = obtenerUsuarioActual(userDetails);
-        CategoriaDTO categoria = categoriaService.obtenerCategoria(id, usuario);
+    public ResponseEntity<CategoriaDTO> obtenerCategoria(@PathVariable Long id) {
+        CategoriaDTO categoria = categoriaService.obtenerCategoriaPorId(id);
         return ResponseEntity.ok(categoria);
     }
 
-    // POST: Crear nueva categoría
+    // POST: Crear nueva categoría (mismo endpoint)
     @PostMapping
-    public ResponseEntity<CategoriaDTO> crearCategoria(@RequestBody CategoriaDTO categoriaDTO,
-                                                       @AuthenticationPrincipal UserDetails userDetails) {
-        Usuario usuario = obtenerUsuarioActual(userDetails);
-        CategoriaDTO categoriaCreada = categoriaService.crearCategoria(categoriaDTO, usuario);
+    public ResponseEntity<CategoriaDTO> crearCategoria(@RequestBody CategoriaDTO categoriaDTO) {
+        CategoriaDTO categoriaCreada = categoriaService.crearCategoria(categoriaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoriaCreada);
     }
 
-    // PUT: Actualizar categoría existente
+    // PUT: Actualizar categoría existente (mismo endpoint)
     @PutMapping("/{id}")
     public ResponseEntity<CategoriaDTO> actualizarCategoria(@PathVariable Long id,
-                                                            @RequestBody CategoriaDTO categoriaDTO,
-                                                            @AuthenticationPrincipal UserDetails userDetails) {
-        Usuario usuario = obtenerUsuarioActual(userDetails);
-        CategoriaDTO categoriaActualizada = categoriaService.actualizarCategoria(id, categoriaDTO, usuario);
+                                                            @RequestBody CategoriaDTO categoriaDTO) {
+        CategoriaDTO categoriaActualizada = categoriaService.actualizarCategoria(id, categoriaDTO);
         return ResponseEntity.ok(categoriaActualizada);
     }
 
-    // DELETE: Eliminar categoría
+    // DELETE: Eliminar categoría (mismo endpoint)
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarCategoria(@PathVariable Long id,
-                                               @AuthenticationPrincipal UserDetails userDetails) {
-        Usuario usuario = obtenerUsuarioActual(userDetails);
-        categoriaService.eliminarCategoria(id, usuario);
+    public ResponseEntity<Map<String, String>> eliminarCategoria(@PathVariable Long id) {
+        categoriaService.eliminarCategoria(id);
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "Categoría eliminada exitosamente");
         return ResponseEntity.ok(response);
     }
 
-    // GET: Verificar si existe categoría por nombre
+    // GET: Verificar si existe categoría por nombre (mismo endpoint)
     @GetMapping("/existe/{nombre}")
-    public ResponseEntity<Map<String, Boolean>> existeCategoria(@PathVariable String nombre,
-                                                                @AuthenticationPrincipal UserDetails userDetails) {
-        Usuario usuario = obtenerUsuarioActual(userDetails);
-        boolean existe = categoriaService.existeCategoria(nombre, usuario);
+    public ResponseEntity<Map<String, Boolean>> existeCategoria(@PathVariable String nombre) {
+        boolean existe = categoriaService.existeCategoria(nombre);
 
         Map<String, Boolean> response = new HashMap<>();
         response.put("existe", existe);

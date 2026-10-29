@@ -2,6 +2,7 @@ package com.notasapp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.notasapp.repository.UsuarioRepository;
 import dev.samstevens.totp.code.DefaultCodeGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ class TwoFactorFlowIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Test
     void enablesAndRequiresTotp() throws Exception {
         mvc.perform(post("/api/v1/auth/register")
@@ -34,6 +38,7 @@ class TwoFactorFlowIT {
                                 {"username":"totp_user","email":"totp_user@example.com","password":"Password123"}
                                 """))
                 .andExpect(status().isCreated());
+        TestUsers.verify(usuarioRepository, "totp_user");
         String access = login("""
                 {"username":"totp_user","password":"Password123"}
                 """);

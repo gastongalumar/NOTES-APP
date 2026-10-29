@@ -1,5 +1,6 @@
 package com.notasapp;
 
+import com.notasapp.repository.UsuarioRepository;
 import com.notasapp.service.MailService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,6 +28,9 @@ class PasswordResetIT {
     @MockBean
     private MailService mailService;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Test
     void resetsPasswordUsingEmailedToken() throws Exception {
         mvc.perform(post("/api/v1/auth/register")
@@ -35,6 +39,7 @@ class PasswordResetIT {
                                 {"username":"reset_user","email":"reset_user@example.com","password":"Password123"}
                                 """))
                 .andExpect(status().isCreated());
+        TestUsers.verify(usuarioRepository, "reset_user");
 
         mvc.perform(post("/api/v1/auth/password/forgot")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -44,9 +49,13 @@ class PasswordResetIT {
                 .andExpect(status().isAccepted());
 
         ArgumentCaptor<String> body = ArgumentCaptor.forClass(String.class);
-        verify(mailService).send(org.mockito.ArgumentMatchers.eq("reset_user@example.com"),
-                org.mockito.ArgumentMatchers.anyString(), body.capture());
-        String text = body.getValue();
+        verify(mailService, org.mockito.Mockito.atLeastOnce())
+                .send(org.mockito.ArgumentMatchers.eq("reset_user@example.com"),
+                        org.mockito.ArgumentMatchers.anyString(), body.capture());
+        String text = body.getAllValues().stream()
+                .filter(value -> value.contains("/reset-password?token="))
+                .findFirst()
+                .orElseThrow();
         String token = text.substring(text.indexOf("token=") + 6).trim();
         assertThat(token).isNotBlank();
 

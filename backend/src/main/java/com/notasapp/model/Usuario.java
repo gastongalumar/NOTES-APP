@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -40,6 +42,7 @@ public class Usuario {
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
 
+    @JdbcTypeCode(SqlTypes.SMALLINT)
     @Column(name = "failed_attempts", nullable = false)
     private int failedAttempts = 0;
 

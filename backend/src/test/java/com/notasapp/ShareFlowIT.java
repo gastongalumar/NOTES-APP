@@ -2,6 +2,7 @@ package com.notasapp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.notasapp.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,6 +29,9 @@ class ShareFlowIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Test
     void createsPublicReadOnlyLink() throws Exception {
         mvc.perform(post("/api/v1/auth/register")
@@ -36,6 +40,7 @@ class ShareFlowIT {
                                 {"username":"share_user","email":"share_user@example.com","password":"Password123"}
                                 """))
                 .andExpect(status().isCreated());
+        TestUsers.verify(usuarioRepository, "share_user");
         String token = login("share_user");
         JsonNode note = json(mvc.perform(post("/api/v1/notes")
                         .header("Authorization", "Bearer " + token)

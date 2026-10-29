@@ -2,6 +2,7 @@ package com.notasapp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.notasapp.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,6 +27,9 @@ class NoteFlowIT {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Test
     void notesCategoriesTagsAndOwnership() throws Exception {
@@ -111,6 +115,7 @@ class NoteFlowIT {
                                 {"username":"%s","email":"%s","password":"Password123","nombre":"Test"}
                                 """.formatted(username, email)))
                 .andExpect(status().isCreated());
+        TestUsers.verify(usuarioRepository, username);
         MockHttpServletResponse login = mvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""

@@ -19,6 +19,9 @@ import com.notasapp.repository.UsuarioRepository;
 import com.notasapp.service.AuditService;
 import com.notasapp.service.NoteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,15 +43,25 @@ public class NoteServiceImpl implements NoteService {
     private final NoteMapper noteMapper;
     private final AuditService auditService;
 
+    @Value("${app.search.fulltext-enabled:true}")
+    private boolean fullTextEnabled;
+
     @Override
     @Transactional(readOnly = true)
     public PageResponse<NoteSummaryResponse> list(Long usuarioId, Boolean archived, String q,
                                                   Long categoryId, Long tagId, Pageable pageable) {
         String query = (q == null || q.isBlank()) ? null : q.trim();
-        return PageResponse.from(
-                notaRepository.search(usuarioId, archived, query, categoryId, tagId, pageable),
-                noteMapper::toSummary
-        );
+        Page<Nota> page;
+        if (query != null && query.length() >= 3 && fullTextEnabled) {
+            String booleanQuery = sanitizeBooleanQuery(query);
+            Pageable unsorted = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+            page = booleanQuery.isBlank()
+                    ? notaRepository.searchLike(usuarioId, archived, query, categoryId, tagId, pageable)
+                    : notaRepository.searchFullText(usuarioId, archived, booleanQuery, categoryId, tagId, unsorted);
+        } else {
+            page = notaRepository.searchLike(usuarioId, archived, query, categoryId, tagId, pageable);
+        }
+        return PageResponse.from(page, noteMapper::toSummary);
     }
 
     @Override
@@ -167,6 +180,10 @@ public class NoteServiceImpl implements NoteService {
             throw new NotFoundException("Algún tag no existe");
         }
         return tags;
+    }
+
+    private String sanitizeBooleanQuery(String query) {
+        return query.replaceAll("[+\\-<>()~*\"@]", " ").replaceAll("\\s+", " ").trim();
     }
 
     private void upsertReminder(Nota nota) {

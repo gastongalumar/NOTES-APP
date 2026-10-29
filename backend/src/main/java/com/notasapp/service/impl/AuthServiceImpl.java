@@ -4,6 +4,7 @@ import com.notasapp.config.AuthProperties;
 import com.notasapp.dto.auth.*;
 import com.notasapp.exception.AccountLockedException;
 import com.notasapp.exception.ConflictException;
+import com.notasapp.exception.EmailNotVerifiedException;
 import com.notasapp.exception.UnauthorizedException;
 import com.notasapp.mapper.UserMapper;
 import com.notasapp.model.Role;
@@ -14,6 +15,7 @@ import com.notasapp.security.JwtPrincipal;
 import com.notasapp.security.JwtService;
 import com.notasapp.service.AuditService;
 import com.notasapp.service.AuthService;
+import com.notasapp.service.EmailVerificationService;
 import com.notasapp.service.RefreshTokenService;
 import com.notasapp.service.TwoFactorService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthProperties authProperties;
     private final AuditService auditService;
     private final TwoFactorService twoFactorService;
+    private final EmailVerificationService emailVerificationService;
 
     @Override
     @Transactional
@@ -61,6 +64,7 @@ public class AuthServiceImpl implements AuthService {
         usuario.setEnabled(true);
         usuario.getRoles().add(role);
         Usuario saved = usuarioRepository.save(usuario);
+        emailVerificationService.request(saved.getId());
         auditService.log("REGISTER", saved.getId(), "USUARIO", saved.getId(), null, null);
         return userMapper.toResponse(saved);
     }
@@ -91,6 +95,9 @@ public class AuthServiceImpl implements AuthService {
             usuarioRepository.save(usuario);
             auditService.log("LOGIN_FAILED", usuario.getId(), "USUARIO", usuario.getId(), ip, userAgent);
             throw new UnauthorizedException("Credenciales inválidas");
+        }
+        if (!usuario.isEmailVerified()) {
+            throw new EmailNotVerifiedException(usuario.getEmail());
         }
         if (twoFactorService.isEnabled(usuario.getId())
                 && !twoFactorService.verifyLogin(usuario.getId(), request.totp())) {

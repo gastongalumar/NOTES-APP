@@ -2,6 +2,7 @@ package com.notasapp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.notasapp.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,6 +27,9 @@ class LockoutAndReuseIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Test
     void locksAfterFailedAttempts() throws Exception {
         mvc.perform(post("/api/v1/auth/register")
@@ -34,6 +38,7 @@ class LockoutAndReuseIT {
                                 {"username":"locked_user","email":"locked_user@example.com","password":"Password123"}
                                 """))
                 .andExpect(status().isCreated());
+        TestUsers.verify(usuarioRepository, "locked_user");
 
         for (int attempt = 0; attempt < 5; attempt++) {
             mvc.perform(post("/api/v1/auth/login")
@@ -60,6 +65,7 @@ class LockoutAndReuseIT {
                                 {"username":"reuse_user","email":"reuse_user@example.com","password":"Password123"}
                                 """))
                 .andExpect(status().isCreated());
+        TestUsers.verify(usuarioRepository, "reuse_user");
 
         MockHttpServletResponse login = mvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

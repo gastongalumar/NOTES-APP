@@ -2,6 +2,7 @@ package com.notasapp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.notasapp.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,6 +28,9 @@ class AuthFlowIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Test
     void registerLoginRefreshAndLogout() throws Exception {
         mvc.perform(post("/api/v1/auth/register")
@@ -35,6 +39,7 @@ class AuthFlowIT {
                                 {"username":"tester","email":"tester@example.com","password":"Password123","nombre":"Test"}
                                 """))
                 .andExpect(status().isCreated());
+        TestUsers.verify(usuarioRepository, "tester");
 
         MockHttpServletResponse login = mvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

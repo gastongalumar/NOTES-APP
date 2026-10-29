@@ -22,10 +22,10 @@ public class RefreshToken {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "token_hash", nullable = false, unique = true, length = 64)
+    @Column(name = "token_hash", nullable = false, unique = true, length = 64, columnDefinition = "char(64)")
     private String tokenHash;
 
-    @Column(name = "family_id", nullable = false, length = 36)
+    @Column(name = "family_id", nullable = false, length = 36, columnDefinition = "char(36)")
     private String familyId;
 
     @Column(name = "issued_at", nullable = false)

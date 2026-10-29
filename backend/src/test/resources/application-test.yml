@@ -28,6 +28,8 @@ app:
     max-families: 5
   cors:
     allowed-origins: http://localhost:5173
+  search:
+    fulltext-enabled: false
   auth:
     max-failed-attempts: 5
     lock-duration: PT15M

@@ -38,7 +38,7 @@ public class Adjunto {
     @Column(name = "tamano_bytes", nullable = false)
     private long tamanoBytes;
 
-    @Column(name = "checksum_sha256", nullable = false, length = 64)
+    @Column(name = "checksum_sha256", nullable = false, length = 64, columnDefinition = "char(64)")
     private String checksumSha256;
 
     @Column(nullable = false, length = 20)

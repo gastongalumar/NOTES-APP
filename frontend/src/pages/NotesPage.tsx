@@ -4,12 +4,12 @@ import type { Category, NoteSummary, Tag } from '@/types/api';
 import { listNotes, deleteNote, setArchived } from '@/api/notes';
 import { listCategories } from '@/api/categories';
 import { listTags } from '@/api/tags';
-import { formatDate } from '@/lib/format';
 import { useToast } from '@/context/ToastContext';
 import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Pagination } from '@/components/ui/Pagination';
+import { NoteCard } from '@/components/notes/NoteCard';
 
 interface NotesPageProps {
   archived?: boolean;
@@ -164,45 +164,12 @@ export function NotesPage({ archived, title = 'Tus notas' }: NotesPageProps) {
       ) : (
         <div className="card-grid">
           {notes.map((note) => (
-            <article className="card note-card" key={note.id}>
-              <div className="note-meta">
-                <span className={`badge ${note.archivada ? '' : 'badge-accent'}`}>
-                  {note.archivada ? 'Archivada' : note.estado}
-                </span>
-                {note.prioridad === 1 ? <span className="badge badge-danger">Prioridad alta</span> : null}
-                {note.fechaVencimiento ? (
-                  <span className="badge">Vence {formatDate(note.fechaVencimiento)}</span>
-                ) : null}
-              </div>
-              <h2>
-                <Link to={`/notes/${note.id}`}>{note.titulo}</Link>
-              </h2>
-              <p className="note-excerpt">{note.extracto || 'Sin contenido.'}</p>
-              <div className="note-meta">
-                {note.categorias.map((category) => (
-                  <span className="badge" key={`c-${category.id}`}>
-                    {category.nombre}
-                  </span>
-                ))}
-                {note.tags.map((tag) => (
-                  <span className="badge" key={`t-${tag.id}`}>
-                    #{tag.nombre}
-                  </span>
-                ))}
-              </div>
-              <div className="note-meta">
-                <span>{formatDate(note.updatedAt)}</span>
-                <Link className="button button-small" to={`/notes/${note.id}/edit`}>
-                  Editar
-                </Link>
-                <Button small onClick={() => toggleArchive(note)}>
-                  {note.archivada ? 'Restaurar' : 'Archivar'}
-                </Button>
-                <Button small variant="danger" onClick={() => setPendingDelete(note)}>
-                  Eliminar
-                </Button>
-              </div>
-            </article>
+            <NoteCard
+              key={note.id}
+              note={note}
+              onDelete={setPendingDelete}
+              onArchive={toggleArchive}
+            />
           ))}
         </div>
       )}

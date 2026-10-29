@@ -22,7 +22,7 @@ function LocationProbe() {
   return <div data-testid="location">{useLocation().pathname}</div>;
 }
 
-function renderCard(onDelete = vi.fn(), onArchive = vi.fn()) {
+function renderCard(onDelete: ((note: NoteSummary) => void) | undefined = vi.fn(), onArchive = vi.fn()) {
   return render(
     <MemoryRouter initialEntries={['/']}>
       <LocationProbe />

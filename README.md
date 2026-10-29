@@ -141,4 +141,4 @@ scripts/   verificación de migración y smoke
 
 ## Estado
 
-Release 1 (auth, notas, categorías, tags, adjuntos, búsqueda, auditoría, temas) implementado. De R2 están implementados los campos de agenda, recordatorios in-app, notificaciones y vista calendario. R3 incluye 2FA TOTP, verificación de email, password reset, enlaces públicos, export PDF/MD y ClamAV opcional; la validación real con Docker/MySQL/MinIO/ClamAV sigue pendiente en este entorno.
+Release 1 (auth, notas, categorías, tags, adjuntos, búsqueda, auditoría, temas) implementado. De R2 están implementados los campos de agenda, recordatorios in-app, notificaciones, campana con polling y vistas calendario, “Hoy” y “Próximos 7 días”. R3 incluye 2FA TOTP, verificación de email, password reset, enlaces públicos, export PDF/MD y ClamAV opcional; la validación real con Docker/MinIO/ClamAV sigue pendiente en este entorno.

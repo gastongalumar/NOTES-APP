@@ -9,6 +9,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { NotesPage } from '@/pages/NotesPage';
 import { CalendarPage } from '@/pages/CalendarPage';
+import { AgendaPage } from '@/pages/AgendaPage';
 import { NoteEditorPage } from '@/pages/NoteEditorPage';
 import { NoteViewPage } from '@/pages/NoteViewPage';
 import { CategoriesPage } from '@/pages/CategoriesPage';
@@ -45,6 +46,8 @@ export default function App() {
                     <Route path="notes/:id" element={<NoteViewPage />} />
                     <Route path="notes/:id/edit" element={<NoteEditorPage />} />
                     <Route path="calendar" element={<CalendarPage />} />
+                    <Route path="today" element={<AgendaPage kind="today" />} />
+                    <Route path="upcoming" element={<AgendaPage kind="upcoming" />} />
                     <Route path="archive" element={<NotesPage archived title="Archivo" />} />
                     <Route path="search" element={<NotesPage title="Buscar" />} />
                     <Route path="categories" element={<CategoriesPage />} />

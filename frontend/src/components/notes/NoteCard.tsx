@@ -6,8 +6,8 @@ import './NoteCard.css';
 
 interface NoteCardProps {
   note: NoteSummary;
-  onDelete: (note: NoteSummary) => void;
-  onArchive: (note: NoteSummary) => void;
+  onDelete?: (note: NoteSummary) => void;
+  onArchive?: (note: NoteSummary) => void;
 }
 
 export function NoteCard({ note, onDelete, onArchive }: NoteCardProps) {
@@ -55,27 +55,31 @@ export function NoteCard({ note, onDelete, onArchive }: NoteCardProps) {
         >
           Editar
         </Link>
-        <Button
-          small
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onArchive(note);
-          }}
-        >
-          {note.archivada ? 'Restaurar' : 'Archivar'}
-        </Button>
-        <Button
-          small
-          variant="danger"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onDelete(note);
-          }}
-        >
-          Eliminar
-        </Button>
+        {onArchive ? (
+          <Button
+            small
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onArchive(note);
+            }}
+          >
+            {note.archivada ? 'Restaurar' : 'Archivar'}
+          </Button>
+        ) : null}
+        {onDelete ? (
+          <Button
+            small
+            variant="danger"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onDelete(note);
+            }}
+          >
+            Eliminar
+          </Button>
+        ) : null}
       </div>
     </div>
   );

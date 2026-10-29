@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { Button } from '@/components/ui/Button';
 
 export function AppShell() {
@@ -31,6 +32,12 @@ export function AppShell() {
           <NavLink className="nav-link" to="/calendar">
             Calendario
           </NavLink>
+          <NavLink className="nav-link" to="/today">
+            Hoy
+          </NavLink>
+          <NavLink className="nav-link" to="/upcoming">
+            Próximos 7 días
+          </NavLink>
           <NavLink className="nav-link" to="/archive">
             Archivo
           </NavLink>
@@ -58,6 +65,7 @@ export function AppShell() {
           </NavLink>
         </nav>
         <div className="sidebar-footer">
+          <NotificationBell />
           <ThemeToggle />
           <div className="user-chip">
             <strong>{user?.nombre || user?.username}</strong>

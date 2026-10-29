@@ -67,8 +67,10 @@ El perfil `dev` carga `db/migration` + `db/seed`. El seed crea las cuentas de de
 
 | Usuario | Contraseña |
 |---|---|
-| `admin` | `admin123` |
-| `usuario` | `usuario123` |
+| `admin` | definida en el seed de desarrollo |
+| `usuario` | definida en el seed de desarrollo |
+
+Las credenciales demo no se publican en el README ni se reutilizan fuera de `dev`.
 
 No usar estas credenciales en producción. El primer `ADMIN` de producción se crea con `BOOTSTRAP_ADMIN_*` solo si no existe ningún administrador.
 

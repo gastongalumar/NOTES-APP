@@ -58,3 +58,4 @@ frontend/playwright-report/
 *.tsbuildinfo
 frontend/vite.config.js
 frontend/vite.config.d.ts
+run.ps1

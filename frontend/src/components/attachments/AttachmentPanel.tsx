@@ -2,17 +2,20 @@ import { useEffect, useState, type ChangeEvent } from 'react';
 import type { Attachment } from '@/types/api';
 import {
   deleteAttachment,
-  attachmentDownloadUrl,
+  downloadAttachment,
   listAttachments,
   uploadAttachment,
 } from '@/api/attachments';
 import { formatBytes, formatDate } from '@/lib/format';
 import { useToast } from '@/context/ToastContext';
 import { Button } from '@/components/ui/Button';
+import { Dialog } from '@/components/ui/Dialog';
+import { AttachmentPreview } from './AttachmentPreview';
 
 export function AttachmentPanel({ noteId }: { noteId: number }) {
   const { push } = useToast();
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [preview, setPreview] = useState<Attachment | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
@@ -44,10 +47,19 @@ export function AttachmentPanel({ noteId }: { noteId: number }) {
   const remove = async (id: number) => {
     try {
       await deleteAttachment(id);
+      if (preview?.id === id) setPreview(null);
       push('Adjunto eliminado', 'success');
       load();
     } catch (caught) {
       push((caught as { message?: string }).message ?? 'No se pudo eliminar', 'error');
+    }
+  };
+
+  const download = async (attachment: Attachment) => {
+    try {
+      await downloadAttachment(attachment.id, attachment.nombreOriginal);
+    } catch (caught) {
+      push((caught as { message?: string }).message ?? 'No se pudo descargar', 'error');
     }
   };
 
@@ -77,21 +89,38 @@ export function AttachmentPanel({ noteId }: { noteId: number }) {
         <ul className="attachment-list">
           {attachments.map((attachment) => (
             <li className="attachment-row" key={attachment.id}>
-              <div>
-                <a href={attachmentDownloadUrl(attachment.id)} target="_blank" rel="noreferrer">
-                  {attachment.nombreOriginal}
-                </a>
+              <div className="attachment-row__info">
+                <strong>{attachment.nombreOriginal}</strong>
                 <div className="subtle">
                   {formatBytes(attachment.tamanoBytes)} · {formatDate(attachment.createdAt)}
                 </div>
               </div>
-              <Button small variant="danger" onClick={() => remove(attachment.id)}>
-                Eliminar
-              </Button>
+              <div className="attachment-row__actions">
+                <Button small onClick={() => setPreview(attachment)}>Ver</Button>
+                <Button small onClick={() => void download(attachment)}>Descargar</Button>
+                <Button small variant="danger" onClick={() => void remove(attachment.id)}>
+                  Eliminar
+                </Button>
+              </div>
             </li>
           ))}
         </ul>
       )}
+
+      <Dialog
+        open={Boolean(preview)}
+        title={preview ? `Vista previa: ${preview.nombreOriginal}` : 'Vista previa'}
+        onClose={() => setPreview(null)}
+        footer={<Button onClick={() => setPreview(null)}>Cerrar</Button>}
+      >
+        {preview ? (
+          <AttachmentPreview
+            attachmentId={preview.id}
+            mimeType={preview.mimeType}
+            filename={preview.nombreOriginal}
+          />
+        ) : null}
+      </Dialog>
     </section>
   );
 }

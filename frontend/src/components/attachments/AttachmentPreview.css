@@ -1,0 +1,48 @@
+.attachment-row__info {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.attachment-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.attachment-preview__image {
+  display: block;
+  max-width: 100%;
+  max-height: calc(var(--space-32) * 2);
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.attachment-preview__pdf {
+  display: block;
+  width: 100%;
+  height: calc(var(--space-32) * 2);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunken);
+}
+
+.attachment-preview__text {
+  max-height: calc(var(--space-32) * 2);
+  margin: 0;
+  padding: var(--space-4);
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunken);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.attachment-preview__other {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}

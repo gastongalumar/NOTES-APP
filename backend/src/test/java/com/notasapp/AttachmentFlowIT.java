@@ -56,12 +56,18 @@ class AttachmentFlowIT {
 
         byte[] png = new byte[]{(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0};
         MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", png);
-        mvc.perform(multipart("/api/v1/notes/" + note.get("id").asLong() + "/attachments")
+        MockHttpServletResponse uploaded = mvc.perform(multipart("/api/v1/notes/" + note.get("id").asLong() + "/attachments")
                         .file(file)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn().getResponse();
+        long attachmentId = json(uploaded).get("id").asLong();
 
         mvc.perform(get("/api/v1/notes/" + note.get("id").asLong() + "/attachments")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        mvc.perform(get("/api/v1/attachments/" + attachmentId + "/download")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 

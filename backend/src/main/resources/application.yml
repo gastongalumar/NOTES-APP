@@ -1,0 +1,110 @@
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+
+spring:
+  application:
+    name: notasapp
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/notas_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:notas}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: false
+    show-sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:}
+    access-ttl: PT15M
+    issuer: notasapp
+    audience: notasapp-web
+  refresh:
+    ttl: P30D
+    cookie-name: ${REFRESH_COOKIE_NAME:notasapp_rt}
+    secure: ${COOKIE_SECURE:false}
+    max-families: 5
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  auth:
+    max-failed-attempts: 5
+    lock-duration: PT15M
+    login-rate-limit: 5
+    register-rate-limit: 3
+    refresh-rate-limit: 30
+  attachments:
+    provider: ${STORAGE_PROVIDER:local}
+    local-path: ${STORAGE_LOCAL_PATH:./storage}
+    max-file-bytes: 10485760
+    max-total-bytes: 209715200
+    max-per-note-bytes: 52428800
+    presign-ttl: PT1M
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket: ${MINIO_BUCKET:notasapp}
+  bootstrap-admin:
+    username: ${BOOTSTRAP_ADMIN_USERNAME:}
+    email: ${BOOTSTRAP_ADMIN_EMAIL:}
+    password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+  mail:
+    provider: ${MAIL_PROVIDER:mailhog}
+    from: ${MAIL_FROM:notasapp@local.test}
+    frontend-url: ${FRONTEND_URL:http://localhost:5173}
+    resend-api-key: ${RESEND_API_KEY:}
+  antivirus:
+    enabled: ${ANTIVIRUS_ENABLED:false}
+    host: ${CLAMAV_HOST:localhost}
+    port: ${CLAMAV_PORT:3310}
+    timeout: PT30S
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}

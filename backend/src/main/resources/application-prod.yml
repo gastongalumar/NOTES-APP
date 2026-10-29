@@ -1,0 +1,22 @@
+spring:
+  flyway:
+    locations: classpath:db/migration
+
+server:
+  forward-headers-strategy: framework
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+app:
+  refresh:
+    cookie-name: __Host-notasapp_rt
+    secure: true
+
+logging:
+  level:
+    root: WARN
+    com.notasapp: INFO

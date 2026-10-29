@@ -1,0 +1,53 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:notasapp;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: false
+
+app:
+  jwt:
+    secret: dGVzdC1zZWNyZXQtdGhhdC1pcy1sb25nLWVub3VnaC1mb3ItaHMyNTYtdGVzdGluZy0xMjM0NTY3ODkw
+    access-ttl: PT15M
+    issuer: notasapp
+    audience: notasapp-web
+  refresh:
+    ttl: P30D
+    cookie-name: notasapp_rt
+    secure: false
+    max-families: 5
+  cors:
+    allowed-origins: http://localhost:5173
+  auth:
+    max-failed-attempts: 5
+    lock-duration: PT15M
+    login-rate-limit: 50
+    register-rate-limit: 50
+    refresh-rate-limit: 50
+  attachments:
+    provider: local
+    local-path: ${java.io.tmpdir}/notasapp-test
+    max-file-bytes: 10485760
+    max-total-bytes: 209715200
+    max-per-note-bytes: 52428800
+    presign-ttl: PT1M
+  bootstrap-admin:
+    username:
+    email:
+    password:
+  mail:
+    provider: mailhog
+    from: notasapp@test.local
+    frontend-url: http://localhost:5173
+  antivirus:
+    enabled: false

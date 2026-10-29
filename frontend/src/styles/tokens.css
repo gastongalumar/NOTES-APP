@@ -1,0 +1,181 @@
+/* ============================================================
+   NotasApp — tokens
+   Nivel 1: global (valores crudos)
+   Nivel 2: semántico (propósito)
+   Nivel 3: componente (solo lo específico)
+   Ningún componente debe usar valores fuera de este archivo.
+   ============================================================ */
+
+:root {
+  /* Tipografía */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: clamp(2rem, 4vw, 3rem);
+  --leading-tight: 1.2;
+  --leading-base: 1.55;
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.08em;
+  --tracking-label: 0.04em;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Espaciado */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Layout */
+  --container: 1160px;
+  --container-narrow: 760px;
+  --gutter: 24px;
+  --nav-width: 248px;
+
+  /* Radios */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --radius-full: 999px;
+
+  /* Movimiento */
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --dur-slow: 260ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Foco y bordes */
+  --focus-ring: 2px;
+  --focus-offset: 3px;
+  --border-width: 1px;
+  --z-skip: 100;
+  --z-overlay: 200;
+  --z-toast: 300;
+  --dur-reduced: 0.01ms;
+
+  /* Neutros crudos */
+  --neutral-0: #ffffff;
+  --neutral-50: #f7f4ee;
+  --neutral-100: #efeae1;
+  --neutral-200: #e2dcd1;
+  --neutral-300: #cfc6b8;
+  --neutral-500: #7d7468;
+  --neutral-700: #423d36;
+  --neutral-900: #211f1c;
+  --neutral-950: #151310;
+
+  /* Semántico — tema claro neumórfico */
+  color-scheme: light;
+  --color-bg: #ece7df;
+  --color-surface: #f4f0e8;
+  --color-surface-raised: #faf7f1;
+  --color-surface-sunken: #e3ddd2;
+  --color-text: #211f1c;
+  --color-text-muted: #625b50;
+  --color-text-subtle: #7d7468;
+  --color-border: #d6cec1;
+  --color-border-strong: #bfb5a6;
+  --color-accent: #a3122a;
+  --color-accent-hover: #7f0d20;
+  --color-accent-contrast: #ffffff;
+  --color-accent-soft: #f1d9d6;
+  --color-success: #1f6f4a;
+  --color-success-soft: #dcece3;
+  --color-warning: #8a5a00;
+  --color-warning-soft: #f2e6cd;
+  --color-danger: #8f0e1c;
+  --color-danger-soft: #f1d9d6;
+  --color-focus: #a3122a;
+  --color-overlay: rgba(20, 18, 16, 0.52);
+
+  --shadow-raised-sm: 0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    2px 2px 5px rgba(120, 112, 100, 0.18),
+    -2px -2px 5px rgba(255, 253, 248, 0.7);
+  --shadow-raised: 0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    5px 5px 12px rgba(120, 112, 100, 0.2),
+    -5px -5px 12px rgba(255, 253, 248, 0.8);
+  --shadow-inset: inset 2px 2px 5px rgba(120, 112, 100, 0.22),
+    inset -2px -2px 5px rgba(255, 253, 248, 0.7);
+  --shadow-overlay: 0 24px 60px rgba(20, 18, 16, 0.18);
+
+  /* Componente */
+  --button-bg: var(--color-surface-raised);
+  --button-bg-hover: var(--color-surface);
+  --button-text: var(--color-text);
+  --button-primary-bg: var(--color-accent);
+  --button-primary-bg-hover: var(--color-accent-hover);
+  --button-primary-text: var(--color-accent-contrast);
+  --input-bg: var(--color-surface-sunken);
+  --input-border: var(--color-border);
+  --nav-bg: var(--color-surface);
+  --card-bg: var(--color-surface-raised);
+  --modal-bg: var(--color-surface-raised);
+  --toast-bg: var(--neutral-900);
+  --toast-text: var(--neutral-0);
+}
+
+[data-theme='light-neumorphic'] {
+  color-scheme: light;
+}
+
+[data-theme='dark-purple'] {
+  color-scheme: dark;
+  --color-bg: #121014;
+  --color-surface: #1a161e;
+  --color-surface-raised: #221c28;
+  --color-surface-sunken: #0d0b0f;
+  --color-text: #f1ecf5;
+  --color-text-muted: #b8aec2;
+  --color-text-subtle: #8e8299;
+  --color-border: rgba(241, 236, 245, 0.14);
+  --color-border-strong: rgba(241, 236, 245, 0.3);
+  --color-accent: #ff7a8f;
+  --color-accent-hover: #ff9aa9;
+  --color-accent-contrast: #240811;
+  --color-accent-soft: rgba(255, 122, 143, 0.14);
+  --color-success: #6ee7b7;
+  --color-success-soft: rgba(110, 231, 183, 0.12);
+  --color-warning: #fcd34d;
+  --color-warning-soft: rgba(252, 211, 77, 0.12);
+  --color-danger: #ff8a93;
+  --color-danger-soft: rgba(255, 138, 147, 0.12);
+  --color-focus: #ff9aa9;
+  --color-overlay: rgba(0, 0, 0, 0.66);
+
+  --shadow-raised-sm: inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    2px 2px 6px rgba(0, 0, 0, 0.38);
+  --shadow-raised: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    6px 6px 16px rgba(0, 0, 0, 0.46);
+  --shadow-inset: inset 2px 2px 6px rgba(0, 0, 0, 0.5),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-overlay: 0 24px 60px rgba(0, 0, 0, 0.6);
+
+  --button-bg: var(--color-surface-raised);
+  --button-bg-hover: var(--color-surface);
+  --button-text: var(--color-text);
+  --button-primary-bg: var(--color-accent);
+  --button-primary-bg-hover: var(--color-accent-hover);
+  --button-primary-text: var(--color-accent-contrast);
+  --input-bg: #0f0d12;
+  --input-border: var(--color-border);
+  --nav-bg: #17131b;
+  --card-bg: var(--color-surface-raised);
+  --modal-bg: var(--color-surface-raised);
+  --toast-bg: #f1ecf5;
+  --toast-text: #17131b;
+}

@@ -1,70 +1,44 @@
-# Getting Started with Create React App
+# NotasApp frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React 18 + TypeScript strict + Vite 5 + React Router 6. CSS plano con tokens.
 
-## Available Scripts
+## Scripts
 
-In the project directory, you can run:
+```bash
+npm ci
+npm run dev        # http://localhost:5173
+npm run typecheck
+npm run test:run
+npm run build
+```
 
-### `npm start`
+## Estructura
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```text
+src/api/        cliente Axios, refresh queue, módulos por recurso
+src/auth/       tokenStore (solo memoria)
+src/components/ ui, layout, notas, adjuntos, routing
+src/context/    AuthContext, ThemeContext, ToastContext
+src/pages/      login, registro, notas, editor, ajustes, admin
+src/styles/     tokens.css, global.css, app.css
+src/types/      DTOs espejo del backend
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Auth
 
-### `npm test`
+El access token vive en una variable de módulo (`src/auth/tokenStore.ts`), nunca en `localStorage`/`sessionStorage`. El refresh usa cookie `HttpOnly` y una cola single-flight; `BroadcastChannel` coordina pestañas. Un 401 de `/auth/*` no dispara refresh.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Diseño
 
-### `npm run build`
+Antes de tocar UI, leer `../AGENTS.md`, `AGENTS.md` y `../docs/DESIGN_DIRECTION.md`. Solo se usan tokens `var(--…)` de `src/styles/tokens.css`; no se hardcodean colores, espacios, tipografía, sombras, radios ni duraciones. Los temas `light-neumorphic` y `dark-purple` se cambian por reemplazo de tokens.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Tests
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Vitest + Testing Library. `npm run test:run` debe quedar verde; `npm run typecheck` y `npm run build` son parte del gate.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+E2E con Playwright (requiere el compose levantado y el seed dev):
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npx playwright install chromium
+E2E_BASE_URL=http://localhost:3000 npm run test:e2e
+```

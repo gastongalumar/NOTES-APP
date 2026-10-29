@@ -1,0 +1,20 @@
+CREATE TABLE adjuntos (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    nota_id BIGINT NOT NULL,
+    usuario_id BIGINT NOT NULL,
+    nombre_original VARCHAR(255) NOT NULL,
+    storage_key VARCHAR(512) NOT NULL,
+    mime_type VARCHAR(100) NOT NULL,
+    tamano_bytes BIGINT NOT NULL,
+    checksum_sha256 CHAR(64) NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'READY',
+    created_at DATETIME(6) NOT NULL,
+    deleted_at DATETIME(6) NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_adjuntos_storage_key (storage_key),
+    KEY idx_adjuntos_nota (nota_id),
+    KEY idx_adjuntos_usuario (usuario_id),
+    KEY idx_adjuntos_checksum (checksum_sha256),
+    CONSTRAINT fk_adjuntos_nota FOREIGN KEY (nota_id) REFERENCES notas (id) ON DELETE RESTRICT,
+    CONSTRAINT fk_adjuntos_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;

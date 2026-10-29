@@ -41,3 +41,20 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+### NotasApp local
+.env
+.env.*
+!.env.example
+backend/build/
+backend/.gradle/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+storage/
+*.log
+frontend/test-results/
+frontend/playwright-report/
+
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts

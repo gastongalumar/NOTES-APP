@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public class MinioProperties {
     private String endpoint = "http://localhost:9000";
-    private String accessKey = "minioadmin";
-    private String secretKey = "minioadmin";
+    private String accessKey;
+    private String secretKey;
     private String bucket = "notasapp";
 }

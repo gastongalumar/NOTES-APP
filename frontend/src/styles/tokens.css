@@ -64,6 +64,7 @@
   --focus-offset: 3px;
   --border-width: 1px;
   --z-skip: 100;
+  --z-banner: 150;
   --z-overlay: 200;
   --z-toast: 300;
   --dur-reduced: 0.01ms;

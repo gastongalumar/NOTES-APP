@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 import { Button } from '@/components/ui/Button';
 
 export function AppShell() {
@@ -67,6 +68,7 @@ export function AppShell() {
         <div className="sidebar-footer">
           <NotificationBell />
           <ThemeToggle />
+          <InstallPrompt />
           <div className="user-chip">
             <strong>{user?.nombre || user?.username}</strong>
             <span className="subtle">{user?.email}</span>

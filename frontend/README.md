@@ -10,6 +10,7 @@ npm run dev        # http://localhost:5173
 npm run typecheck
 npm run test:run
 npm run build
+npm run preview    # build + service worker en http://localhost:4173
 ```
 
 ## Estructura
@@ -20,8 +21,10 @@ src/auth/       tokenStore (solo memoria)
 src/components/ ui, layout, notas, adjuntos, routing
 src/context/    AuthContext, ThemeContext, ToastContext
 src/pages/      login, registro, notas, editor, ajustes, admin
+src/pwa/        registro del service worker y estado de actualización
 src/styles/     tokens.css, global.css, app.css
 src/types/      DTOs espejo del backend
+public/icons/   iconos de la PWA (192, 512, maskable, apple-touch)
 ```
 
 ## Auth
@@ -32,6 +35,14 @@ El access token vive en una variable de módulo (`src/auth/tokenStore.ts`), nunc
 
 Antes de tocar UI, leer `../AGENTS.md`, `AGENTS.md` y `../docs/DESIGN_DIRECTION.md`. Solo se usan tokens `var(--…)` de `src/styles/tokens.css`; no se hardcodean colores, espacios, tipografía, sombras, radios ni duraciones. Los temas `light-neumorphic` y `dark-purple` se cambian por reemplazo de tokens.
 
+## PWA
+
+El build genera `sw.js`, `manifest.webmanifest` e iconos instalables. El service worker no se registra en `npm run dev`: hay que usar `npm run preview`.
+
+- Offline: se precachea solo el app shell; `/api/**` nunca se cachea.
+- Actualización: aviso en pantalla, sin reemplazar la sesión sin confirmación.
+- Detalle y límites en `../docs/adr/0009-pwa-offline.md`.
+
 ## Tests
 
 Vitest + Testing Library. `npm run test:run` debe quedar verde; `npm run typecheck` y `npm run build` son parte del gate.
@@ -41,4 +52,12 @@ E2E con Playwright (requiere el compose levantado y el seed dev):
 ```bash
 npx playwright install chromium
 E2E_BASE_URL=http://localhost:3000 npm run test:e2e
+```
+
+`e2e/pwa.spec.ts` no necesita backend: valida manifest, registro del service worker y navegación offline contra el build.
+
+```bash
+npm run build
+npm run preview -- --port 4173
+E2E_BASE_URL=http://localhost:4173 npx playwright test e2e/pwa.spec.ts
 ```

@@ -57,6 +57,9 @@ Ambos temas se implementan **reemplazando tokens** en `[data-theme]`; no hay CSS
 - **Badge:** metadatos y estados; nunca como único indicador de error.
 - **Dialog:** `role="dialog"`, `aria-modal`, focus trap, Escape y retorno de foco.
 - **Toast:** `aria-live="polite"`; no reemplaza errores de formulario inline.
+- **OfflineBanner:** aviso fijo y no bloqueante cuando `navigator.onLine` es falso; `role="status"`.
+- **PwaUpdatePrompt:** aviso de versión nueva con “Actualizar” y “Ahora no”; nunca actualiza sin confirmación.
+- **InstallPrompt:** botón “Instalar app” solo cuando el navegador emite `beforeinstallprompt`; no se simula en iOS.
 - **EmptyState:** explica qué falta y cuál es la acción siguiente.
 
 ## Motion
@@ -79,6 +82,8 @@ Ambos temas se implementan **reemplazando tokens** en `[data-theme]`; no hay CSS
 2. Ningún componente usa hex/rgba/px de diseño directamente.
 3. Si un componente necesita un estado nuevo, se agrega el token semántico y se documenta acá.
 4. Los cambios de tokens se revisan en ambos temas y en mobile/desktop.
+5. `--z-banner` (150) ordena los avisos de PWA por encima del contenido y por debajo de overlays y toasts.
+6. El manifest no puede leer CSS: `vite.config.ts` espeja `--color-bg` de `light-neumorphic` para `background_color` y `theme_color`. Si cambia ese token, se actualizan ambos valores. El `theme-color` en runtime sí se sincroniza desde el token.
 
 ## Estados de producto
 

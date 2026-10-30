@@ -5,7 +5,7 @@ Aplicación de notas y tareas con autenticación, roles, adjuntos y búsqueda. E
 ## Stack
 
 - **Backend:** Java 17, Spring Boot 3.2, Spring Security, JPA, MySQL 8, Flyway, JWT, MapStruct, Lombok, MinIO.
-- **Frontend:** React 18, TypeScript strict, Vite 5, React Router 6, Axios, CSS plano con tokens.
+- **Frontend:** React 18, TypeScript strict, Vite 5, React Router 6, Axios, CSS plano con tokens, PWA con Workbox.
 - **Infra:** Docker Compose, GitHub Actions, Testcontainers (tests con H2 en CI/local sin Docker).
 
 ## Funcionalidades
@@ -17,6 +17,7 @@ Aplicación de notas y tareas con autenticación, roles, adjuntos y búsqueda. E
 - Adjuntos con cuota, validación de MIME/magic bytes, checksum SHA-256 y descarga firmada o local.
 - Auditoría de eventos de autenticación y administración.
 - Dos temas (`light-neumorphic` y `dark-purple`) con `system/light/dark` y anti-FOUC.
+- PWA instalable con app shell offline y aviso de actualización.
 
 ## Inicio rápido con Docker
 
@@ -84,6 +85,26 @@ npm run dev
 
 Abre <http://localhost:5173>. Vite hace proxy de `/api` a `http://localhost:8080`.
 
+## PWA e instalación
+
+El frontend se compila como PWA instalable (`vite-plugin-pwa` + Workbox):
+
+- Manifest en `/manifest.webmanifest` con iconos 192/512, maskable y shortcuts a “Nueva nota” y “Hoy”.
+- Service worker con precache del app shell y `navigateFallback` para las rutas del SPA; `/api/**` queda excluido.
+- Si hay una versión nueva, la app muestra un aviso y actualiza cuando la persona confirma.
+- Sin conexión aparece un banner y la app sigue abriendo, pero no guarda cambios: **no se cachean respuestas autenticadas**.
+- El botón “Instalar app” aparece cuando el navegador lo permite (Chrome/Edge/Android). En iOS se instala desde Compartir → Añadir a inicio.
+
+Para probar el build real (el service worker no se registra en `npm run dev`):
+
+```bash
+cd frontend
+npm run build
+npm run preview
+```
+
+El service worker requiere HTTPS o `localhost`. En producción, `nginx.conf` sirve `sw.js`, `manifest.webmanifest` e `index.html` con `no-cache`. Ver `docs/adr/0009-pwa-offline.md`.
+
 ## Base de datos y migraciones
 
 Flyway aplica `backend/src/main/resources/db/migration/V1–V17`. La base actual de demo **se recrea**; no se migran datos legacy. Antes de recrear, guardá un `mysqldump` fuera del repositorio.
@@ -121,6 +142,8 @@ cd frontend && npm run typecheck && npm run test:run && npm run build
 ```
 
 Los tests de backend usan H2 en perfil `test`; no requieren MySQL ni Docker. Para integración real con MySQL/MinIO, levantar el compose y ejecutar el smoke.
+
+Los E2E de Playwright necesitan un servidor con el build (`npm run preview -- --port 4173`) o el compose en `http://localhost:3000`; `E2E_BASE_URL` define la base. `e2e/pwa.spec.ts` valida manifest, service worker y navegación offline sin backend.
 
 ## Estructura
 

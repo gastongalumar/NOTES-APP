@@ -21,6 +21,15 @@ interface ThemeContextValue {
 const STORAGE_KEY = 'notasapp.theme';
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+function syncThemeColor(): void {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) return;
+  const background = getComputedStyle(document.documentElement)
+    .getPropertyValue('--color-bg')
+    .trim();
+  if (background) meta.setAttribute('content', background);
+}
+
 function systemTheme(): ResolvedTheme {
   if (typeof window.matchMedia !== 'function') return 'light-neumorphic';
   return window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -49,6 +58,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const nextTheme = resolve(nextMode);
     document.documentElement.dataset.theme = nextTheme;
     document.documentElement.dataset.themeMode = nextMode;
+    syncThemeColor();
     setTheme(nextTheme);
   }, []);
 

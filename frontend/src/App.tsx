@@ -4,6 +4,8 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { ToastProvider } from '@/context/ToastContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AppShell } from '@/components/layout/AppShell';
+import { OfflineBanner } from '@/components/pwa/OfflineBanner';
+import { PwaUpdatePrompt } from '@/components/pwa/PwaUpdatePrompt';
 import { AdminRoute, ProtectedRoute } from '@/components/routing/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
@@ -31,6 +33,7 @@ export default function App() {
         <ToastProvider>
           <AuthProvider>
             <BrowserRouter>
+              <OfflineBanner />
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
@@ -62,6 +65,7 @@ export default function App() {
                 </Route>
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
+              <PwaUpdatePrompt />
             </BrowserRouter>
           </AuthProvider>
         </ToastProvider>

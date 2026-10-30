@@ -23,6 +23,12 @@
   background: var(--color-warning);
 }
 
+.auth-pwa {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-4);
+}
+
 .install-prompt {
   display: inline-flex;
   align-items: center;

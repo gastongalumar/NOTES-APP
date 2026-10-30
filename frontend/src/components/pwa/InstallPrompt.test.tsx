@@ -1,7 +1,8 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { InstallPrompt } from './InstallPrompt';
+import { clearDeferredInstallPrompt, initInstallPrompt } from '@/pwa/installPrompt';
 import type { BeforeInstallPromptEvent } from '@/types/pwa';
 
 function buildInstallEvent(prompt: () => Promise<void>): BeforeInstallPromptEvent {
@@ -17,7 +18,12 @@ function buildInstallEvent(prompt: () => Promise<void>): BeforeInstallPromptEven
 }
 
 describe('InstallPrompt', () => {
+  beforeAll(() => {
+    initInstallPrompt();
+  });
+
   afterEach(() => {
+    clearDeferredInstallPrompt();
     vi.restoreAllMocks();
   });
 

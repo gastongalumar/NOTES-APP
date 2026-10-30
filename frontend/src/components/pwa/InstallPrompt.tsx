@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { BeforeInstallPromptEvent } from '@/types/pwa';
+import {
+  clearDeferredInstallPrompt,
+  getDeferredInstallPrompt,
+  subscribeInstallPrompt,
+} from '@/pwa/installPrompt';
 import './Pwa.css';
 
 function isStandalone(): boolean {
@@ -11,23 +16,21 @@ function isStandalone(): boolean {
 }
 
 export function InstallPrompt() {
-  const [promptEvent, setPromptEvent] = useState<BeforeInstallPromptEvent | null>(null);
+  const [promptEvent, setPromptEvent] = useState<BeforeInstallPromptEvent | null>(
+    () => getDeferredInstallPrompt(),
+  );
   const [installed, setInstalled] = useState(isStandalone);
 
   useEffect(() => {
-    const handleBeforeInstall = (event: Event) => {
-      event.preventDefault();
-      setPromptEvent(event as BeforeInstallPromptEvent);
-    };
+    const unsubscribe = subscribeInstallPrompt(setPromptEvent);
     const handleInstalled = () => {
       setInstalled(true);
       setPromptEvent(null);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
     window.addEventListener('appinstalled', handleInstalled);
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      unsubscribe();
       window.removeEventListener('appinstalled', handleInstalled);
     };
   }, []);
@@ -36,7 +39,7 @@ export function InstallPrompt() {
 
   const install = async () => {
     const event = promptEvent;
-    setPromptEvent(null);
+    clearDeferredInstallPrompt();
     try {
       await event.prompt();
       await event.userChoice;

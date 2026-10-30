@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
+import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 import type { ApiError } from '@/types/api';
 
 export function LoginPage() {
@@ -73,6 +74,9 @@ export function LoginPage() {
             {loading ? 'Entrando…' : 'Entrar'}
           </Button>
         </form>
+        <div className="auth-pwa">
+          <InstallPrompt />
+        </div>
         <p className="auth-footer">
           <Link to="/forgot-password">Olvidé mi contraseña</Link>
           <br />

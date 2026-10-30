@@ -5,8 +5,8 @@ import path from 'node:path';
 
 // El manifest no puede leer tokens CSS: estos dos valores espejan
 // --color-bg de light-neumorphic en src/styles/tokens.css.
-const PWA_BACKGROUND = '#ece7df';
-const PWA_THEME = '#ece7df';
+const PWA_BACKGROUND = '#eef1f7';
+const PWA_THEME = '#eef1f7';
 
 export default defineConfig({
   plugins: [

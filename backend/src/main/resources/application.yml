@@ -68,6 +68,9 @@ app:
     access-ttl: PT15M
     issuer: notasapp
     audience: notasapp-web
+  security:
+    # Clave dedicada para cifrar secretos TOTP. Si queda vacía se deriva de JWT_SECRET.
+    encryption-key: ${APP_ENCRYPTION_KEY:}
   refresh:
     ttl: P30D
     cookie-name: ${REFRESH_COOKIE_NAME:notasapp_rt}
@@ -83,6 +86,7 @@ app:
     login-rate-limit: 5
     register-rate-limit: 3
     refresh-rate-limit: 30
+    email-resend-rate-limit: ${EMAIL_RESEND_RATE_LIMIT:3}
     require-email-verification: ${REQUIRE_EMAIL_VERIFICATION:true}
   attachments:
     provider: ${STORAGE_PROVIDER:local}

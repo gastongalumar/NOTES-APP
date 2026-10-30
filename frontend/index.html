@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#ece7df" />
+    <meta name="theme-color" content="#eef1f7" />
     <meta name="description" content="NotasApp: agenda personal y archivador seguro" />
     <meta name="application-name" content="NotasApp" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -16,17 +16,26 @@
     <script>
       (function () {
         try {
-          var mode = localStorage.getItem('notasapp.theme') || 'system';
-          var theme = mode;
-          if (mode === 'system') {
+          var stored = localStorage.getItem('notasapp.theme') || 'system';
+          var legacy = { light: 'light-neumorphic', dark: 'dark-purple' };
+          var preference = legacy[stored] || stored;
+          var known = [
+            'light-neumorphic',
+            'dark-purple',
+            'light-cobalt',
+            'dark-aurora',
+          ];
+          var theme = preference;
+          if (preference === 'system') {
             theme = window.matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark-purple'
-              : 'light-neumorphic';
+              ? 'dark-aurora'
+              : 'light-cobalt';
           }
+          if (known.indexOf(theme) === -1) theme = 'light-cobalt';
           document.documentElement.dataset.theme = theme;
-          document.documentElement.dataset.themeMode = mode;
+          document.documentElement.dataset.themeMode = preference;
         } catch (e) {
-          document.documentElement.dataset.theme = 'light-neumorphic';
+          document.documentElement.dataset.theme = 'light-cobalt';
         }
       })();
     </script>

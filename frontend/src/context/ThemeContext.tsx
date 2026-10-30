@@ -8,18 +8,57 @@ import {
   type ReactNode,
 } from 'react';
 
-export type ThemeMode = 'system' | 'light' | 'dark';
-type ResolvedTheme = 'light-neumorphic' | 'dark-purple';
+export type ThemeId = 'light-neumorphic' | 'dark-purple' | 'light-cobalt' | 'dark-aurora';
+export type ThemePreference = ThemeId | 'system';
 
-interface ThemeContextValue {
-  mode: ThemeMode;
-  theme: ResolvedTheme;
-  setMode: (mode: ThemeMode) => void;
-  cycle: () => void;
+export interface ThemeOption {
+  id: ThemePreference;
+  label: string;
+  short: string;
+  description: string;
 }
 
+export const THEME_OPTIONS: ThemeOption[] = [
+  { id: 'system', label: 'Sistema', short: 'Auto', description: 'Sigue al dispositivo' },
+  { id: 'light-cobalt', label: 'Cobalto', short: 'Cobalto', description: 'Claro, azul profundo' },
+  { id: 'dark-aurora', label: 'Aurora', short: 'Aurora', description: 'Oscuro, lavanda' },
+  { id: 'light-neumorphic', label: 'Papel', short: 'Papel', description: 'Cálido y neumórfico' },
+  { id: 'dark-purple', label: 'Tinta', short: 'Tinta', description: 'Oscuro violeta' },
+];
+
+const DEFAULT_LIGHT: ThemeId = 'light-cobalt';
+const DEFAULT_DARK: ThemeId = 'dark-aurora';
 const STORAGE_KEY = 'notasapp.theme';
+const THEME_IDS: ThemeId[] = ['light-neumorphic', 'dark-purple', 'light-cobalt', 'dark-aurora'];
+
+interface ThemeContextValue {
+  preference: ThemePreference;
+  theme: ThemeId;
+  setPreference: (preference: ThemePreference) => void;
+}
+
 const ThemeContext = createContext<ThemeContextValue | null>(null);
+
+function isThemeId(value: string | null): value is ThemeId {
+  return value !== null && THEME_IDS.includes(value as ThemeId);
+}
+
+function systemTheme(): ThemeId {
+  if (typeof window.matchMedia !== 'function') return DEFAULT_LIGHT;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? DEFAULT_DARK : DEFAULT_LIGHT;
+}
+
+function readPreference(): ThemePreference {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored === 'light') return 'light-neumorphic';
+  if (stored === 'dark') return 'dark-purple';
+  if (stored === 'system' || isThemeId(stored)) return stored;
+  return 'system';
+}
+
+function resolve(preference: ThemePreference): ThemeId {
+  return preference === 'system' ? systemTheme() : preference;
+}
 
 function syncThemeColor(): void {
   const meta = document.querySelector('meta[name="theme-color"]');
@@ -30,64 +69,35 @@ function syncThemeColor(): void {
   if (background) meta.setAttribute('content', background);
 }
 
-function systemTheme(): ResolvedTheme {
-  if (typeof window.matchMedia !== 'function') return 'light-neumorphic';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark-purple'
-    : 'light-neumorphic';
-}
-
-function readMode(): ThemeMode {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === 'light' || stored === 'dark' || stored === 'system'
-    ? stored
-    : 'system';
-}
-
-function resolve(mode: ThemeMode): ResolvedTheme {
-  if (mode === 'light') return 'light-neumorphic';
-  if (mode === 'dark') return 'dark-purple';
-  return systemTheme();
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>(() => readMode());
-  const [theme, setTheme] = useState<ResolvedTheme>(() => resolve(readMode()));
+  const [preference, setPreferenceState] = useState<ThemePreference>(readPreference);
+  const [theme, setTheme] = useState<ThemeId>(() => resolve(readPreference()));
 
-  const apply = useCallback((nextMode: ThemeMode) => {
-    const nextTheme = resolve(nextMode);
+  const apply = useCallback((next: ThemePreference) => {
+    const nextTheme = resolve(next);
     document.documentElement.dataset.theme = nextTheme;
-    document.documentElement.dataset.themeMode = nextMode;
+    document.documentElement.dataset.themeMode = next;
     syncThemeColor();
     setTheme(nextTheme);
   }, []);
 
   useEffect(() => {
-    apply(mode);
-    localStorage.setItem(STORAGE_KEY, mode);
-    if (mode !== 'system' || typeof window.matchMedia !== 'function') return;
+    apply(preference);
+    localStorage.setItem(STORAGE_KEY, preference);
+    if (preference !== 'system' || typeof window.matchMedia !== 'function') return;
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const listener = () => apply('system');
     media.addEventListener('change', listener);
     return () => media.removeEventListener('change', listener);
-  }, [mode, apply]);
+  }, [preference, apply]);
 
-  const setMode = useCallback(
-    (next: ThemeMode) => {
-      setModeState(next);
-    },
-    [],
-  );
-
-  const cycle = useCallback(() => {
-    setModeState((current) =>
-      current === 'system' ? 'light' : current === 'light' ? 'dark' : 'system',
-    );
+  const setPreference = useCallback((next: ThemePreference) => {
+    setPreferenceState(next);
   }, []);
 
   const value = useMemo(
-    () => ({ mode, theme, setMode, cycle }),
-    [mode, theme, setMode, cycle],
+    () => ({ preference, theme, setPreference }),
+    [preference, theme, setPreference],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

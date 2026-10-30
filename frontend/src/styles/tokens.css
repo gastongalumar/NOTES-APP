@@ -37,6 +37,7 @@
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
+  --space-14: 56px;
   --space-16: 64px;
 
   /* Layout */
@@ -128,6 +129,8 @@
   --modal-bg: var(--color-surface-raised);
   --toast-bg: var(--neutral-900);
   --toast-text: var(--neutral-0);
+  --qr-bg: var(--neutral-0);
+  --qr-fg: var(--neutral-950);
 }
 
 [data-theme='light-neumorphic'] {
@@ -179,4 +182,110 @@
   --modal-bg: var(--color-surface-raised);
   --toast-bg: #f1ecf5;
   --toast-text: #17131b;
+}
+
+/* Tema claro cobalto: papel frío, acento azul profundo, superficies planas. */
+[data-theme='light-cobalt'] {
+  color-scheme: light;
+  --color-bg: #eef1f7;
+  --color-surface: #f5f7fb;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #e3e8f2;
+  --color-text: #101828;
+  --color-text-muted: #475467;
+  --color-text-subtle: #667085;
+  --color-border: #d4dbe7;
+  --color-border-strong: #b3bfd3;
+  --color-accent: #2743c8;
+  --color-accent-hover: #1c33a3;
+  --color-accent-contrast: #ffffff;
+  --color-accent-soft: #e2e8ff;
+  --color-success: #067647;
+  --color-success-soft: #d9f3e6;
+  --color-warning: #8a4b00;
+  --color-warning-soft: #fbeed6;
+  --color-danger: #b42318;
+  --color-danger-soft: #fbe4e2;
+  --color-focus: #2743c8;
+  --color-overlay: rgba(16, 24, 40, 0.55);
+
+  --shadow-raised-sm: 0 1px 2px rgba(16, 24, 40, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  --shadow-raised: 0 10px 24px rgba(16, 24, 40, 0.09),
+    0 2px 6px rgba(16, 24, 40, 0.05);
+  --shadow-inset: inset 0 1px 2px rgba(16, 24, 40, 0.08);
+  --shadow-overlay: 0 24px 60px rgba(16, 24, 40, 0.2);
+
+  --button-bg: var(--color-surface-raised);
+  --button-bg-hover: var(--color-surface);
+  --button-text: var(--color-text);
+  --button-primary-bg: var(--color-accent);
+  --button-primary-bg-hover: var(--color-accent-hover);
+  --button-primary-text: var(--color-accent-contrast);
+  --input-bg: #ffffff;
+  --input-border: var(--color-border);
+  --nav-bg: #f5f7fb;
+  --card-bg: var(--color-surface-raised);
+  --modal-bg: var(--color-surface-raised);
+  --toast-bg: #101828;
+  --toast-text: #ffffff;
+}
+
+/* Tema oscuro aurora: violeta profundo, acento lavanda. */
+[data-theme='dark-aurora'] {
+  color-scheme: dark;
+  --color-bg: #0b0a12;
+  --color-surface: #12101c;
+  --color-surface-raised: #1a1728;
+  --color-surface-sunken: #07060c;
+  --color-text: #f1eefb;
+  --color-text-muted: #b7aecb;
+  --color-text-subtle: #8f85a6;
+  --color-border: rgba(241, 238, 251, 0.13);
+  --color-border-strong: rgba(241, 238, 251, 0.28);
+  --color-accent: #b7a4ff;
+  --color-accent-hover: #cfc2ff;
+  --color-accent-contrast: #171128;
+  --color-accent-soft: rgba(183, 164, 255, 0.16);
+  --color-success: #6ee7c8;
+  --color-success-soft: rgba(110, 231, 200, 0.12);
+  --color-warning: #fcd34d;
+  --color-warning-soft: rgba(252, 211, 77, 0.12);
+  --color-danger: #ff9aa8;
+  --color-danger-soft: rgba(255, 154, 168, 0.12);
+  --color-focus: #cfc2ff;
+  --color-overlay: rgba(3, 2, 8, 0.72);
+
+  --shadow-raised-sm: inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-raised: inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 12px 30px rgba(0, 0, 0, 0.55);
+  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+  --shadow-overlay: 0 24px 60px rgba(0, 0, 0, 0.7);
+
+  --button-bg: var(--color-surface-raised);
+  --button-bg-hover: var(--color-surface);
+  --button-text: var(--color-text);
+  --button-primary-bg: var(--color-accent);
+  --button-primary-bg-hover: var(--color-accent-hover);
+  --button-primary-text: var(--color-accent-contrast);
+  --input-bg: #0f0d18;
+  --input-border: var(--color-border);
+  --nav-bg: #100e19;
+  --card-bg: var(--color-surface-raised);
+  --modal-bg: var(--color-surface-raised);
+  --toast-bg: #f1eefb;
+  --toast-text: #12101c;
+}
+
+/* Previews del selector de tema (deben existir para los cuatro temas a la vez). */
+:root {
+  --preview-light-neumorphic-bg: #efeae1;
+  --preview-light-neumorphic-accent: #a3122a;
+  --preview-dark-purple-bg: #1a161e;
+  --preview-dark-purple-accent: #ff7a8f;
+  --preview-light-cobalt-bg: #eef1f7;
+  --preview-light-cobalt-accent: #2743c8;
+  --preview-dark-aurora-bg: #12101c;
+  --preview-dark-aurora-accent: #b7a4ff;
 }

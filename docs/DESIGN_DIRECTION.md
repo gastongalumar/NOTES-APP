@@ -33,6 +33,24 @@ La app debe transmitir **control y privacidad**: nada de métricas inventadas, d
 - Acento: coral (`--color-accent`).
 - Sombras: profundas, sin invertir los colores del tema claro.
 
+### `light-cobalt`
+
+- Fondo: papel frío gris azulado (`--color-bg`).
+- Superficies: blancas con bordes hairline (`--color-surface-raised`).
+- Texto: azul casi negro (`--color-text`).
+- Acento: cobalto profundo (`--color-accent`).
+- Sombras: bajas y difusas, sin neumorfismo marcado.
+
+### `dark-aurora`
+
+- Fondo: negro violáceo (`--color-bg`).
+- Superficies: violeta profundo (`--color-surface`, `--color-surface-raised`).
+- Texto: lavanda claro (`--color-text`).
+- Acento: lavanda (`--color-accent`), con contraste oscuro para botones.
+- Sombras: profundas y de bajo contraste.
+
+`system` resuelve a `light-cobalt` o `dark-aurora`; `Papel` y `Tinta` quedan disponibles para quien prefiera la identidad anterior. El selector `ThemePicker` muestra las cinco opciones con un swatch de cada paleta y persiste la elección en `notasapp.theme`.
+
 Ambos temas se implementan **reemplazando tokens** en `[data-theme]`; no hay CSS condicional por tema.
 
 ## Tipografía
@@ -60,6 +78,10 @@ Ambos temas se implementan **reemplazando tokens** en `[data-theme]`; no hay CSS
 - **OfflineBanner:** aviso fijo y no bloqueante cuando `navigator.onLine` es falso; `role="status"`.
 - **PwaUpdatePrompt:** aviso de versión nueva con “Actualizar” y “Ahora no”; nunca actualiza sin confirmación.
 - **InstallPrompt:** botón “Instalar app” solo cuando el navegador emite `beforeinstallprompt`; no se simula en iOS.
+- **AuthLayout:** dos columnas en desktop (marca + formulario) y una sola en móvil; el lockup de marca se muestra una vez por viewport.
+- **ThemePicker:** botón compacto con panel de radios nativos; cinco opciones (Sistema, Cobalto, Aurora, Papel, Tinta). En móvil se usa la misma lista dentro de la hoja “Más”.
+- **Navegación móvil:** barra inferior fija con cinco destinos (Inicio, Notas, Agenda, Calendario, Más). “Más” abre una hoja con el resto de secciones, tema, usuario y cierre de sesión. En desktop se mantiene la sidebar agrupada por Espacio / Organizar / Administración.
+- **2FA:** el secreto se ofrece como QR (`qrcode.react`) y como texto copiable; los códigos de recuperación se muestran una sola vez.
 - **EmptyState:** explica qué falta y cuál es la acción siguiente.
 
 ## Motion
@@ -83,7 +105,9 @@ Ambos temas se implementan **reemplazando tokens** en `[data-theme]`; no hay CSS
 3. Si un componente necesita un estado nuevo, se agrega el token semántico y se documenta acá.
 4. Los cambios de tokens se revisan en ambos temas y en mobile/desktop.
 5. `--z-banner` (150) ordena los avisos de PWA por encima del contenido y por debajo de overlays y toasts.
-6. El manifest no puede leer CSS: `vite.config.ts` espeja `--color-bg` de `light-neumorphic` para `background_color` y `theme_color`. Si cambia ese token, se actualizan ambos valores. El `theme-color` en runtime sí se sincroniza desde el token.
+6. `--space-14` (56px) define la altura de la barra superior móvil; `--qr-bg`/`--qr-fg` garantizan que el QR de 2FA se pueda escanear en ambos temas.
+7. El manifest no puede leer CSS: `vite.config.ts` espeja `--color-bg` de `light-cobalt` para `background_color` y `theme_color`. Si cambia ese token, se actualizan ambos valores. El `theme-color` en runtime sí se sincroniza desde el token.
+8. Los tokens `--preview-*` existen solo para dibujar los swatches del selector de tema, porque necesita mostrar las cuatro paletas al mismo tiempo.
 
 ## Estados de producto
 

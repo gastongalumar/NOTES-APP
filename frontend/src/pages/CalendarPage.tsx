@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/Button';
 export function CalendarPage() {
   const [month, setMonth] = useState(() => new Date());
   const [notes, setNotes] = useState<NoteSummary[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const days = useMemo(() => {
@@ -30,9 +31,12 @@ export function CalendarPage() {
   useEffect(() => {
     const start = startOfWeek(startOfMonth(month), { weekStartsOn: 1 });
     const end = endOfWeek(endOfMonth(month), { weekStartsOn: 1 });
+    setLoading(true);
+    setError('');
     agenda(start.toISOString(), end.toISOString())
       .then(setNotes)
-      .catch((caught) => setError((caught as { message?: string }).message ?? 'No se pudo cargar la agenda'));
+      .catch((caught) => setError((caught as { message?: string }).message ?? 'No se pudo cargar la agenda'))
+      .finally(() => setLoading(false));
   }, [month]);
 
   const byDay = useMemo(() => {
@@ -52,39 +56,60 @@ export function CalendarPage() {
           <p className="eyebrow">Agenda</p>
           <h1>{format(month, 'MMMM yyyy', { locale: es })}</h1>
         </div>
-        <div className="toolbar" style={{ marginBottom: 0 }}>
-          <Button onClick={() => setMonth(addMonths(month, -1))}>Mes anterior</Button>
-          <Button onClick={() => setMonth(new Date())}>Hoy</Button>
-          <Button onClick={() => setMonth(addMonths(month, 1))}>Mes siguiente</Button>
+        <div className="calendar-nav">
+          <Button small onClick={() => setMonth(addMonths(month, -1))} aria-label="Mes anterior">
+            ←
+          </Button>
+          <Button small onClick={() => setMonth(new Date())}>
+            Hoy
+          </Button>
+          <Button small onClick={() => setMonth(addMonths(month, 1))} aria-label="Mes siguiente">
+            →
+          </Button>
         </div>
       </header>
 
-      {error ? <div className="error-banner" role="alert">{error}</div> : null}
+      {error ? (
+        <div className="error-banner" role="alert">
+          {error}
+        </div>
+      ) : null}
 
-      <div className="calendar" role="grid" aria-label="Calendario de vencimientos">
-        {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day) => (
-          <div className="calendar-head" role="columnheader" key={day}>{day}</div>
-        ))}
-        {days.map((day) => {
-          const key = format(day, 'yyyy-MM-dd');
-          const items = byDay.get(key) ?? [];
-          return (
-            <div
-              className={`calendar-day ${isSameMonth(day, month) ? '' : 'is-outside'} ${isToday(day) ? 'is-today' : ''}`}
-              role="gridcell"
-              key={key}
-            >
-              <span className="calendar-number">{format(day, 'd')}</span>
-              {items.slice(0, 3).map((note) => (
-                <Link className="calendar-note" to={`/notes/${note.id}`} key={note.id}>
-                  {note.titulo}
-                </Link>
-              ))}
-              {items.length > 3 ? <span className="subtle">+{items.length - 3} más</span> : null}
-            </div>
-          );
-        })}
-      </div>
+      {loading ? (
+        <div className="empty-state">Cargando calendario…</div>
+      ) : (
+        <>
+          {notes.length === 0 ? <p className="subtle calendar-hint">Sin vencimientos este mes.</p> : null}
+          <div className="calendar" role="grid" aria-label="Calendario de vencimientos">
+            {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day) => (
+              <div className="calendar-head" role="columnheader" key={day}>
+                {day}
+              </div>
+            ))}
+            {days.map((day) => {
+              const key = format(day, 'yyyy-MM-dd');
+              const items = byDay.get(key) ?? [];
+              return (
+                <div
+                  className={`calendar-day ${isSameMonth(day, month) ? '' : 'is-outside'} ${
+                    isToday(day) ? 'is-today' : ''
+                  } ${items.length > 0 ? 'has-notes' : ''}`}
+                  role="gridcell"
+                  key={key}
+                >
+                  <span className="calendar-number">{format(day, 'd')}</span>
+                  {items.slice(0, 3).map((note) => (
+                    <Link className="calendar-note" to={`/notes/${note.id}`} key={note.id}>
+                      {note.titulo}
+                    </Link>
+                  ))}
+                  {items.length > 3 ? <span className="subtle">+{items.length - 3} más</span> : null}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </>
   );
 }

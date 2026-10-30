@@ -1,6 +1,7 @@
 package com.notasapp.service;
 
 import com.notasapp.dto.auth.TwoFactorSetupResponse;
+import com.notasapp.dto.auth.TwoFactorStatusResponse;
 
 import java.util.List;
 
@@ -8,6 +9,10 @@ public interface TwoFactorService {
     TwoFactorSetupResponse setup(Long usuarioId);
 
     List<String> verifyAndEnable(Long usuarioId, String code);
+
+    TwoFactorStatusResponse status(Long usuarioId);
+
+    void disable(Long usuarioId, String password);
 
     boolean isEnabled(Long usuarioId);
 

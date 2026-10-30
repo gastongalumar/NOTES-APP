@@ -62,6 +62,18 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     @Override
     @Transactional
+    public void resend(String email) {
+        String normalized = email == null ? "" : email.trim().toLowerCase();
+        if (normalized.isEmpty()) {
+            return;
+        }
+        usuarioRepository.findByEmailAndDeletedAtIsNull(normalized)
+                .filter(usuario -> !usuario.isEmailVerified())
+                .ifPresent(usuario -> request(usuario.getId()));
+    }
+
+    @Override
+    @Transactional
     public void verify(String rawToken) {
         AccountToken token = tokenRepository.findByTokenHashAndTipo(hash(rawToken), TYPE)
                 .orElseThrow(() -> new UnprocessableException("INVALID_EMAIL_TOKEN", "El enlace no es válido"));

@@ -16,7 +16,9 @@ Aplicación de notas y tareas con autenticación, roles, adjuntos y búsqueda. E
 - Búsqueda por título/contenido y filtros por categoría/tag.
 - Adjuntos con cuota, validación de MIME/magic bytes, checksum SHA-256 y descarga firmada o local.
 - Auditoría de eventos de autenticación y administración.
-- Dos temas (`light-neumorphic` y `dark-purple`) con `system/light/dark` y anti-FOUC.
+- Cuatro temas (`light-cobalt`, `dark-aurora`, `light-neumorphic`, `dark-purple`) con selector, persistencia y anti-FOUC.
+- 2FA TOTP con QR, códigos de recuperación de un solo uso y desactivación con contraseña.
+- Verificación de email con reenvío desde el login y re-verificación al cambiar el email.
 - PWA instalable con app shell offline y aviso de actualización.
 
 ## Inicio rápido con Docker
@@ -49,6 +51,17 @@ El backend falla al arrancar si `JWT_SECRET` no está definido. El secreto debe 
 ```bash
 openssl rand -base64 48
 ```
+
+### Email en producción
+
+La verificación de email y el reset de contraseña dependen de `MAIL_PROVIDER`:
+
+- `mailhog` (desarrollo) usa `MAIL_HOST` y `MAIL_PORT`.
+- `resend` requiere `RESEND_API_KEY` y un `MAIL_FROM` verificado en Resend.
+- `FRONTEND_URL` debe ser la URL pública: los enlaces de verificación y reset se arman con esa base.
+- En Docker Compose estas variables se toman del `.env`; ya no están fijas en el compose.
+
+Si el envío falla, el registro queda creado pero sin verificar. La persona puede pedir un reenvío desde la pantalla de login.
 
 ### 3. Backend
 
@@ -160,10 +173,13 @@ scripts/   verificación de migración y smoke
 - Sin secretos en el repositorio; `.env` ignorado.
 - CORS con orígenes exactos, sin `*` con credenciales.
 - Contraseñas BCrypt, rate limit en auth y lockout.
+- 2FA TOTP: secreto cifrado, setup idempotente, códigos de recuperación de un solo uso y desactivación con contraseña.
+- Reenvío de verificación público, sin enumeración de cuentas y con rate limit por IP.
+- `APP_ENCRYPTION_KEY` es opcional y separa el cifrado de los secretos 2FA del `JWT_SECRET`. Rotarla (o rotar el JWT) invalida los 2FA existentes.
 - Upload con whitelist, magic bytes y cuotas; bucket privado y presigned TTL corto.
 - Errores sin stack traces; Swagger deshabilitado en prod.
 - Consultar `AGENTS.md` y `docs/DESIGN_DIRECTION.md` antes de tocar UI.
 
 ## Estado
 
-Release 1 (auth, notas, categorías, tags, adjuntos, búsqueda, auditoría, temas) implementado. De R2 están implementados los campos de agenda, recordatorios in-app, notificaciones, campana con polling y vistas calendario, “Hoy” y “Próximos 7 días”. R3 incluye 2FA TOTP, verificación de email, password reset, enlaces públicos, export PDF/MD y ClamAV opcional; la validación real con Docker/MinIO/ClamAV sigue pendiente en este entorno.
+Release 1 (auth, notas, categorías, tags, adjuntos, búsqueda, auditoría, temas) implementado. De R2 están implementados los campos de agenda, recordatorios in-app, notificaciones, campana con polling y vistas calendario, “Hoy” y “Próximos 7 días”. R3 incluye 2FA TOTP, verificación de email, password reset, enlaces públicos, export PDF/MD y ClamAV opcional. La UI se reorganizó con cuatro temas, login en dos pasos, navegación móvil por barra inferior y un inicio con métricas reales. La validación real con Docker/MinIO/ClamAV sigue pendiente en este entorno.

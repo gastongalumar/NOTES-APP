@@ -91,7 +91,7 @@ export function CategoriesPage() {
             <input id="category-name" className="input" value={form.nombre} onChange={(e) => update('nombre', e.target.value)} required maxLength={50} />
           </Field>
           <Field id="category-color" label="Color">
-            <input id="category-color" className="input" type="color" value={form.color} onChange={(e) => update('color', e.target.value)} />
+            <input id="category-color" className="input input-color" type="color" value={form.color} onChange={(e) => update('color', e.target.value)} />
           </Field>
           <Field id="category-description" label="Descripción" full>
             <input id="category-description" className="input" value={form.descripcion} onChange={(e) => update('descripcion', e.target.value)} maxLength={500} />

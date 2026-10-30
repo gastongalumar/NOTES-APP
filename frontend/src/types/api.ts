@@ -13,6 +13,7 @@ export interface ApiError {
   code: string;
   message: string;
   fieldErrors?: Record<string, string>;
+  email?: string;
 }
 
 export interface User {

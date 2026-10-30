@@ -86,6 +86,12 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/email/resend")
+    public ResponseEntity<Void> resendEmailVerification(@Valid @RequestBody ResendVerificationRequest request) {
+        emailVerificationService.resend(request.email());
+        return ResponseEntity.accepted().build();
+    }
+
     @GetMapping("/me")
     public ResponseEntity<UserResponse> me(@AuthenticationPrincipal JwtPrincipal principal) {
         return ResponseEntity.ok(authService.me(principal));

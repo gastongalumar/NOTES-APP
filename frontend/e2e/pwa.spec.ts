@@ -31,7 +31,7 @@ test.describe('pwa', () => {
     await context.setOffline(true);
     try {
       await page.goto('/login');
-      await expect(page.getByRole('heading', { name: 'Entrar a NotasApp' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Entrar' })).toBeVisible();
     } finally {
       await context.setOffline(false);
     }

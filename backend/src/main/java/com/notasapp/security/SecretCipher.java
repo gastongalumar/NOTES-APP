@@ -2,6 +2,7 @@ package com.notasapp.security;
 
 import com.notasapp.config.JwtProperties;
 import io.jsonwebtoken.io.Decoders;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
@@ -18,14 +19,30 @@ public class SecretCipher {
     private final SecretKeySpec key;
     private final SecureRandom random = new SecureRandom();
 
-    public SecretCipher(JwtProperties properties) {
-        byte[] secret = Decoders.BASE64.decode(properties.getSecret());
+    public SecretCipher(JwtProperties properties,
+                        @Value("${app.security.encryption-key:}") String encryptionKey) {
+        String material = encryptionKey == null || encryptionKey.isBlank()
+                ? properties.getSecret()
+                : encryptionKey;
+        byte[] secret = keyMaterial(material);
         try {
             byte[] derived = MessageDigest.getInstance("SHA-256").digest(secret);
             this.key = new SecretKeySpec(derived, "AES");
         } catch (Exception ex) {
             throw new IllegalStateException("No se pudo inicializar el cifrado", ex);
         }
+    }
+
+    private static byte[] keyMaterial(String value) {
+        try {
+            byte[] decoded = Decoders.BASE64.decode(value);
+            if (decoded.length >= 16) {
+                return decoded;
+            }
+        } catch (RuntimeException ignored) {
+            // No es base64: se usa el valor crudo.
+        }
+        return value.getBytes(StandardCharsets.UTF_8);
     }
 
     public String encrypt(String plain) {

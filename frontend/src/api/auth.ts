@@ -81,6 +81,14 @@ export async function requestEmailVerification(): Promise<void> {
   await http.post('/auth/email/request');
 }
 
+export async function resendEmailVerification(email: string): Promise<void> {
+  try {
+    await raw.post('/auth/email/resend', { email });
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
 export async function verifyEmail(token: string): Promise<void> {
   try {
     await raw.post('/auth/email/verify', { token });

@@ -8,6 +8,7 @@ import { OfflineBanner } from '@/components/pwa/OfflineBanner';
 import { PwaUpdatePrompt } from '@/components/pwa/PwaUpdatePrompt';
 import { AdminRoute, ProtectedRoute } from '@/components/routing/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
+import { HomePage } from '@/pages/HomePage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { NotesPage } from '@/pages/NotesPage';
 import { CalendarPage } from '@/pages/CalendarPage';
@@ -43,7 +44,7 @@ export default function App() {
                 <Route path="/verify-email" element={<VerifyEmailPage />} />
                 <Route element={<ProtectedRoute />}>
                   <Route element={<AppShell />}>
-                    <Route index element={<NotesPage title="Inicio" />} />
+                    <Route index element={<HomePage />} />
                     <Route path="notes" element={<NotesPage title="Todas las notas" />} />
                     <Route path="notes/new" element={<NoteEditorPage />} />
                     <Route path="notes/:id" element={<NoteViewPage />} />

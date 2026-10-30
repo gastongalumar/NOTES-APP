@@ -1,13 +1,30 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import { changePassword, deleteAccount, requestEmailVerification, updateProfile } from '@/api/auth';
-import { setupTwoFactor, verifyTwoFactor } from '@/api/twoFactor';
+import {
+  changePassword,
+  deleteAccount,
+  requestEmailVerification,
+  updateProfile,
+} from '@/api/auth';
+import {
+  disableTwoFactor,
+  setupTwoFactor,
+  statusTwoFactor,
+  verifyTwoFactor,
+  type TwoFactorSetup,
+  type TwoFactorStatus,
+} from '@/api/twoFactor';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { Dialog } from '@/components/ui/Dialog';
+import { ThemeOptions } from '@/components/theme/ThemeOptions';
+
+function messageOf(caught: unknown, fallback: string): string {
+  return (caught as { message?: string }).message ?? fallback;
+}
 
 export function SettingsPage() {
   const { user, logout, refreshUser } = useAuth();
@@ -18,9 +35,18 @@ export function SettingsPage() {
   const [deletePassword, setDeletePassword] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState('');
-  const [twoFactorSecret, setTwoFactorSecret] = useState('');
+  const [twoFactor, setTwoFactor] = useState<TwoFactorStatus | null>(null);
+  const [setup, setSetup] = useState<TwoFactorSetup | null>(null);
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
+  const [disableOpen, setDisableOpen] = useState(false);
+  const [disablePassword, setDisablePassword] = useState('');
+
+  useEffect(() => {
+    statusTwoFactor()
+      .then(setTwoFactor)
+      .catch(() => setTwoFactor(null));
+  }, []);
 
   const saveProfile = async (event: FormEvent) => {
     event.preventDefault();
@@ -30,7 +56,7 @@ export function SettingsPage() {
       await refreshUser();
       push('Perfil actualizado', 'success');
     } catch (caught) {
-      setError((caught as { message?: string }).message ?? 'No se pudo guardar');
+      setError(messageOf(caught, 'No se pudo guardar'));
     }
   };
 
@@ -42,7 +68,7 @@ export function SettingsPage() {
       setPasswords({ currentPassword: '', newPassword: '' });
       push('Contraseña actualizada. Se cerraron las otras sesiones.', 'success');
     } catch (caught) {
-      setError((caught as { message?: string }).message ?? 'No se pudo cambiar la contraseña');
+      setError(messageOf(caught, 'No se pudo cambiar la contraseña'));
     }
   };
 
@@ -51,31 +77,70 @@ export function SettingsPage() {
       await requestEmailVerification();
       push('Te enviamos un enlace de verificación', 'success');
     } catch (caught) {
-      push((caught as { message?: string }).message ?? 'No se pudo enviar el enlace', 'error');
+      push(messageOf(caught, 'No se pudo enviar el enlace'), 'error');
     }
   };
 
   const startTwoFactor = async () => {
     setError('');
+    setRecoveryCodes([]);
     try {
-      const setup = await setupTwoFactor();
-      setTwoFactorSecret(setup.secret);
-      setRecoveryCodes([]);
+      const response = await setupTwoFactor();
+      setSetup(response);
     } catch (caught) {
-      setError((caught as { message?: string }).message ?? 'No se pudo iniciar 2FA');
+      setError(messageOf(caught, 'No se pudo iniciar 2FA'));
     }
+  };
+
+  const cancelTwoFactor = () => {
+    setSetup(null);
+    setTwoFactorCode('');
   };
 
   const confirmTwoFactor = async () => {
     setError('');
     try {
-      const codes = await verifyTwoFactor(twoFactorCode);
+      const codes = await verifyTwoFactor(twoFactorCode.trim());
       setRecoveryCodes(codes);
+      setSetup(null);
       setTwoFactorCode('');
+      setTwoFactor({ enabled: true, recoveryCodesRemaining: codes.length });
       push('2FA activado. Guardá los códigos de recuperación.', 'success');
     } catch (caught) {
-      setError((caught as { message?: string }).message ?? 'Código 2FA inválido');
+      setError(messageOf(caught, 'Código 2FA inválido'));
     }
+  };
+
+  const confirmDisable = async () => {
+    setError('');
+    try {
+      await disableTwoFactor(disablePassword);
+      setDisableOpen(false);
+      setDisablePassword('');
+      setTwoFactor({ enabled: false, recoveryCodesRemaining: 0 });
+      push('2FA desactivado', 'success');
+    } catch (caught) {
+      push(messageOf(caught, 'No se pudo desactivar 2FA'), 'error');
+    }
+  };
+
+  const copy = async (value: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      push(`${label} copiado`, 'success');
+    } catch {
+      push('No se pudo copiar al portapapeles', 'error');
+    }
+  };
+
+  const downloadRecoveryCodes = () => {
+    const blob = new Blob([recoveryCodes.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'notasapp-codigos-recuperacion.txt';
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const removeAccount = async () => {
@@ -84,7 +149,7 @@ export function SettingsPage() {
       await logout();
       navigate('/login', { replace: true });
     } catch (caught) {
-      push((caught as { message?: string }).message ?? 'No se pudo eliminar la cuenta', 'error');
+      push(messageOf(caught, 'No se pudo eliminar la cuenta'), 'error');
     }
   };
 
@@ -95,80 +160,241 @@ export function SettingsPage() {
           <p className="eyebrow">Cuenta</p>
           <h1>Configuración</h1>
         </div>
-        <ThemeToggle />
       </header>
 
-      {error ? <div className="error-banner" role="alert">{error}</div> : null}
+      {error ? (
+        <div className="error-banner" role="alert">
+          {error}
+        </div>
+      ) : null}
 
-      <section className="card" style={{ marginBottom: 'var(--space-6)' }}>
-        <h2>Perfil</h2>
-        <form className="auth-form" onSubmit={saveProfile}>
-          <Field id="profile-name" label="Nombre">
-            <input id="profile-name" className="input" value={profile.nombre} onChange={(e) => setProfile({ ...profile, nombre: e.target.value })} />
-          </Field>
-          <Field id="profile-email" label="Email">
-            <input id="profile-email" className="input" type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} />
-          </Field>
-          <Button type="submit" variant="primary">Guardar perfil</Button>
-        </form>
-        {!user?.emailVerified ? (
-          <div className="toolbar" style={{ marginTop: 'var(--space-4)', marginBottom: 0 }}>
-            <span className="subtle">Tu email todavía no está verificado.</span>
-            <Button small onClick={requestVerification}>Verificar email</Button>
-          </div>
-        ) : (
-          <p className="subtle" style={{ marginTop: 'var(--space-3)' }}>Email verificado.</p>
-        )}
-      </section>
-
-      <section className="card" style={{ marginBottom: 'var(--space-6)' }}>
-        <h2>Contraseña</h2>
-        <form className="auth-form" onSubmit={savePassword}>
-          <Field id="current-password" label="Contraseña actual">
-            <input id="current-password" className="input" type="password" autoComplete="current-password" value={passwords.currentPassword} onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })} required />
-          </Field>
-          <Field id="new-password" label="Nueva contraseña" hint="Mínimo 10 caracteres">
-            <input id="new-password" className="input" type="password" autoComplete="new-password" value={passwords.newPassword} onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })} required />
-          </Field>
-          <Button type="submit" variant="primary">Cambiar contraseña</Button>
-        </form>
-      </section>
-
-      <section className="card" style={{ marginBottom: 'var(--space-6)' }}>
-        <h2>Autenticación en dos pasos</h2>
-        {recoveryCodes.length > 0 ? (
-          <>
-            <p className="muted">Guardá estos códigos de recuperación. No se vuelven a mostrar.</p>
-            <div className="tag-list">
-              {recoveryCodes.map((code) => (
-                <span className="badge" key={code}>{code}</span>
-              ))}
-            </div>
-          </>
-        ) : twoFactorSecret ? (
-          <>
-            <p className="muted">Cargá este secreto en tu app autenticadora y confirmá el código.</p>
-            <p className="badge">{twoFactorSecret}</p>
-            <Field id="two-factor-code" label="Código de 6 dígitos">
-              <input id="two-factor-code" className="input" inputMode="numeric" value={twoFactorCode} onChange={(e) => setTwoFactorCode(e.target.value)} />
+      <div className="settings-layout">
+        <section className="card">
+          <header className="settings-card__head">
+            <h2>Perfil</h2>
+            <span className={`badge ${user?.emailVerified ? 'badge-success' : 'badge-danger'}`}>
+              {user?.emailVerified ? 'Email verificado' : 'Email sin verificar'}
+            </span>
+          </header>
+          <form className="auth-form" onSubmit={saveProfile}>
+            <Field id="profile-name" label="Nombre">
+              <input
+                id="profile-name"
+                className="input"
+                value={profile.nombre}
+                onChange={(event) => setProfile({ ...profile, nombre: event.target.value })}
+              />
             </Field>
-            <Button variant="primary" onClick={confirmTwoFactor} disabled={twoFactorCode.length !== 6}>
-              Confirmar 2FA
+            <Field
+              id="profile-email"
+              label="Email"
+              hint="Si lo cambiás, tenés que verificarlo de nuevo."
+            >
+              <input
+                id="profile-email"
+                className="input"
+                type="email"
+                value={profile.email}
+                onChange={(event) => setProfile({ ...profile, email: event.target.value })}
+              />
+            </Field>
+            <div className="settings-actions">
+              <Button type="submit" variant="primary">
+                Guardar perfil
+              </Button>
+              {!user?.emailVerified ? (
+                <Button small onClick={requestVerification}>
+                  Reenviar verificación
+                </Button>
+              ) : null}
+            </div>
+          </form>
+        </section>
+
+        <section className="card">
+          <header className="settings-card__head">
+            <h2>Autenticación en dos pasos</h2>
+            <span className={`badge ${twoFactor?.enabled ? 'badge-success' : ''}`}>
+              {twoFactor?.enabled ? 'Activa' : 'Inactiva'}
+            </span>
+          </header>
+
+          {recoveryCodes.length > 0 ? (
+            <div className="two-factor-recovery">
+              <p className="muted">
+                Guardá estos códigos ahora. Cada uno sirve una sola vez y no se vuelven a mostrar.
+              </p>
+              <ul className="recovery-grid">
+                {recoveryCodes.map((code) => (
+                  <li key={code}>{code}</li>
+                ))}
+              </ul>
+              <div className="settings-actions">
+                <Button small onClick={() => copy(recoveryCodes.join('\n'), 'Códigos')}>
+                  Copiar códigos
+                </Button>
+                <Button small onClick={downloadRecoveryCodes}>
+                  Descargar .txt
+                </Button>
+              </div>
+            </div>
+          ) : setup ? (
+            <div className="two-factor-setup">
+              <div className="qr-frame">
+                <QRCodeSVG value={setup.otpauthUri} size={168} bgColor="transparent" fgColor="currentColor" />
+              </div>
+              <div className="two-factor-setup__body">
+                <p className="muted">
+                  Escaneá el código con Google Authenticator, 1Password o Authy. Si no podés,
+                  cargá el secreto manualmente.
+                </p>
+                <div className="secret-row">
+                  <code className="secret-box">{setup.secret}</code>
+                  <Button small onClick={() => copy(setup.secret, 'Secreto')}>
+                    Copiar
+                  </Button>
+                </div>
+                <Field id="two-factor-code" label="Código de 6 dígitos">
+                  <input
+                    id="two-factor-code"
+                    className="input input-code"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    value={twoFactorCode}
+                    onChange={(event) => setTwoFactorCode(event.target.value)}
+                    maxLength={6}
+                  />
+                </Field>
+                <div className="settings-actions">
+                  <Button
+                    variant="primary"
+                    onClick={confirmTwoFactor}
+                    disabled={twoFactorCode.trim().length !== 6}
+                  >
+                    Confirmar y activar
+                  </Button>
+                  <Button variant="ghost" onClick={cancelTwoFactor}>
+                    Cancelar
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : twoFactor?.enabled ? (
+            <div className="two-factor-enabled">
+              <p className="muted">
+                Tu cuenta pide un código de tu app autenticadora al iniciar sesión.
+                {twoFactor.recoveryCodesRemaining > 0
+                  ? ` Te quedan ${twoFactor.recoveryCodesRemaining} códigos de recuperación.`
+                  : ' No te quedan códigos de recuperación.'}
+              </p>
+              <div className="settings-actions">
+                <Button variant="danger" onClick={() => setDisableOpen(true)}>
+                  Desactivar 2FA
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="two-factor-off">
+              <p className="muted">
+                Sumá una capa extra: además de tu contraseña, un código de 6 dígitos generado en
+                tu teléfono.
+              </p>
+              <div className="settings-actions">
+                <Button variant="primary" onClick={startTwoFactor}>
+                  Activar 2FA
+                </Button>
+              </div>
+            </div>
+          )}
+        </section>
+
+        <section className="card">
+          <header className="settings-card__head">
+            <h2>Contraseña</h2>
+          </header>
+          <form className="auth-form" onSubmit={savePassword}>
+            <Field id="current-password" label="Contraseña actual">
+              <input
+                id="current-password"
+                className="input"
+                type="password"
+                autoComplete="current-password"
+                value={passwords.currentPassword}
+                onChange={(event) =>
+                  setPasswords({ ...passwords, currentPassword: event.target.value })
+                }
+                required
+              />
+            </Field>
+            <Field id="new-password" label="Nueva contraseña" hint="Mínimo 10 caracteres">
+              <input
+                id="new-password"
+                className="input"
+                type="password"
+                autoComplete="new-password"
+                value={passwords.newPassword}
+                onChange={(event) =>
+                  setPasswords({ ...passwords, newPassword: event.target.value })
+                }
+                required
+              />
+            </Field>
+            <div className="settings-actions">
+              <Button type="submit" variant="primary">
+                Cambiar contraseña
+              </Button>
+            </div>
+          </form>
+        </section>
+
+        <section className="card">
+          <header className="settings-card__head">
+            <h2>Tema</h2>
+          </header>
+          <ThemeOptions name="theme-settings" />
+        </section>
+
+        <section className="card">
+          <header className="settings-card__head">
+            <h2>Sesión y cuenta</h2>
+            <span className="subtle">@{user?.username}</span>
+          </header>
+          <div className="settings-actions">
+            <Button onClick={() => logout().then(() => navigate('/login', { replace: true }))}>
+              Cerrar sesión
+            </Button>
+            <Button variant="danger" onClick={() => setConfirmDelete(true)}>
+              Eliminar mi cuenta
+            </Button>
+          </div>
+        </section>
+      </div>
+
+      <Dialog
+        open={disableOpen}
+        title="Desactivar 2FA"
+        onClose={() => setDisableOpen(false)}
+        footer={
+          <>
+            <Button onClick={() => setDisableOpen(false)}>Cancelar</Button>
+            <Button variant="danger" onClick={confirmDisable} disabled={!disablePassword}>
+              Desactivar
             </Button>
           </>
-        ) : (
-          <Button onClick={startTwoFactor}>Activar 2FA</Button>
-        )}
-      </section>
-
-      <section className="card">
-        <h2>Sesión y cuenta</h2>
-        <p className="muted">Usuario: {user?.username}</p>
-        <div className="toolbar">
-          <Button onClick={() => logout().then(() => navigate('/login', { replace: true }))}>Cerrar sesión</Button>
-          <Button variant="danger" onClick={() => setConfirmDelete(true)}>Eliminar mi cuenta</Button>
-        </div>
-      </section>
+        }
+      >
+        <p>Confirmá tu contraseña para desactivar la autenticación en dos pasos.</p>
+        <Field id="disable-password" label="Contraseña">
+          <input
+            id="disable-password"
+            className="input"
+            type="password"
+            autoComplete="current-password"
+            value={disablePassword}
+            onChange={(event) => setDisablePassword(event.target.value)}
+          />
+        </Field>
+      </Dialog>
 
       <Dialog
         open={confirmDelete}
@@ -183,9 +409,15 @@ export function SettingsPage() {
           </>
         }
       >
-        <p>La cuenta se desactivará y no podrá iniciar sesión. Esta acción es irreversible desde la UI.</p>
+        <p>La cuenta se desactiva y no podés iniciar sesión. Esta acción es irreversible.</p>
         <Field id="delete-password" label="Confirmá tu contraseña">
-          <input id="delete-password" className="input" type="password" value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} />
+          <input
+            id="delete-password"
+            className="input"
+            type="password"
+            value={deletePassword}
+            onChange={(event) => setDeletePassword(event.target.value)}
+          />
         </Field>
       </Dialog>
     </>

@@ -8,9 +8,11 @@ interface NoteCardProps {
   note: NoteSummary;
   onDelete?: (note: NoteSummary) => void;
   onArchive?: (note: NoteSummary) => void;
+  showEdit?: boolean;
 }
 
-export function NoteCard({ note, onDelete, onArchive }: NoteCardProps) {
+export function NoteCard({ note, onDelete, onArchive, showEdit = true }: NoteCardProps) {
+  const hasActions = showEdit || Boolean(onDelete) || Boolean(onArchive);
   return (
     <div className="note-card-shell">
       <Link className="note-card" to={`/notes/${note.id}`}>
@@ -47,40 +49,44 @@ export function NoteCard({ note, onDelete, onArchive }: NoteCardProps) {
         </article>
       </Link>
 
-      <div className="note-card__actions">
-        <Link
-          className="button button-small"
-          to={`/notes/${note.id}/edit`}
-          onClick={(event) => event.stopPropagation()}
-        >
-          Editar
-        </Link>
-        {onArchive ? (
-          <Button
-            small
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              onArchive(note);
-            }}
-          >
-            {note.archivada ? 'Restaurar' : 'Archivar'}
-          </Button>
-        ) : null}
-        {onDelete ? (
-          <Button
-            small
-            variant="danger"
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              onDelete(note);
-            }}
-          >
-            Eliminar
-          </Button>
-        ) : null}
-      </div>
+      {hasActions ? (
+        <div className="note-card__actions">
+          {showEdit ? (
+            <Link
+              className="button button-small"
+              to={`/notes/${note.id}/edit`}
+              onClick={(event) => event.stopPropagation()}
+            >
+              Editar
+            </Link>
+          ) : null}
+          {onArchive ? (
+            <Button
+              small
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onArchive(note);
+              }}
+            >
+              {note.archivada ? 'Restaurar' : 'Archivar'}
+            </Button>
+          ) : null}
+          {onDelete ? (
+            <Button
+              small
+              variant="danger"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onDelete(note);
+              }}
+            >
+              Eliminar
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

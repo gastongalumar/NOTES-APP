@@ -4,6 +4,7 @@ import App from './App';
 import './styles/tokens.css';
 import './styles/global.css';
 import './styles/app.css';
+import './components/layout/shell.css';
 import { registerServiceWorker } from './pwa/register';
 import { initInstallPrompt } from './pwa/installPrompt';
 

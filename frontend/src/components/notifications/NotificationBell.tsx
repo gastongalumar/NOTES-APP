@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { unreadCount } from '@/api/notifications';
+import { Icon } from '@/components/icons/Icon';
 import './NotificationBell.css';
 
-export function NotificationBell() {
+interface NotificationBellProps {
+  compact?: boolean;
+}
+
+export function NotificationBell({ compact = false }: NotificationBellProps) {
   const navigate = useNavigate();
   const [count, setCount] = useState(0);
 
@@ -32,16 +37,15 @@ export function NotificationBell() {
   return (
     <button
       type="button"
-      className="notification-bell"
+      className={`notification-bell${compact ? ' notification-bell--compact' : ''}`}
       onClick={() => navigate('/notifications')}
       aria-label={count > 0 ? `Notificaciones: ${count} sin leer` : 'Notificaciones'}
     >
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
-        <path d="M10 21h4" />
-      </svg>
-      <span>Notificaciones</span>
-      {count > 0 ? <span className="notification-bell__badge">{count > 99 ? '99+' : count}</span> : null}
+      <Icon name="bell" size={compact ? 20 : 18} />
+      {compact ? null : <span>Notificaciones</span>}
+      {count > 0 ? (
+        <span className="notification-bell__badge">{count > 99 ? '99+' : count}</span>
+      ) : null}
     </button>
   );
 }

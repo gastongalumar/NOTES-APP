@@ -97,7 +97,7 @@
 @media (max-width: 640px) {
   .pwa-update {
     right: var(--space-3);
-    bottom: var(--space-3);
+    bottom: calc(var(--space-16) + var(--space-4));
     left: var(--space-3);
     width: auto;
     max-width: none;

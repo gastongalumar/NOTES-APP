@@ -1,6 +1,8 @@
 package com.notasapp.controller;
 
+import com.notasapp.dto.auth.DisableTwoFactorRequest;
 import com.notasapp.dto.auth.TwoFactorSetupResponse;
+import com.notasapp.dto.auth.TwoFactorStatusResponse;
 import com.notasapp.dto.auth.TwoFactorVerifyRequest;
 import com.notasapp.security.JwtPrincipal;
 import com.notasapp.service.TwoFactorService;
@@ -20,6 +22,11 @@ public class TwoFactorController {
 
     private final TwoFactorService twoFactorService;
 
+    @GetMapping("/status")
+    public ResponseEntity<TwoFactorStatusResponse> status(@AuthenticationPrincipal JwtPrincipal principal) {
+        return ResponseEntity.ok(twoFactorService.status(principal.userId()));
+    }
+
     @PostMapping("/setup")
     public ResponseEntity<TwoFactorSetupResponse> setup(@AuthenticationPrincipal JwtPrincipal principal) {
         return ResponseEntity.ok(twoFactorService.setup(principal.userId()));
@@ -30,5 +37,12 @@ public class TwoFactorController {
                                                              @Valid @RequestBody TwoFactorVerifyRequest request) {
         return ResponseEntity.ok(Map.of("recoveryCodes",
                 twoFactorService.verifyAndEnable(principal.userId(), request.code())));
+    }
+
+    @PostMapping("/disable")
+    public ResponseEntity<Void> disable(@AuthenticationPrincipal JwtPrincipal principal,
+                                        @Valid @RequestBody DisableTwoFactorRequest request) {
+        twoFactorService.disable(principal.userId(), request.password());
+        return ResponseEntity.noContent().build();
     }
 }

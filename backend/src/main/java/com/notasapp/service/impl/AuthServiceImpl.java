@@ -99,10 +99,15 @@ public class AuthServiceImpl implements AuthService {
         if (authProperties.isRequireEmailVerification() && !usuario.isEmailVerified()) {
             throw new EmailNotVerifiedException(usuario.getEmail());
         }
-        if (twoFactorService.isEnabled(usuario.getId())
-                && !twoFactorService.verifyLogin(usuario.getId(), request.totp())) {
-            auditService.log("LOGIN_2FA_FAILED", usuario.getId(), "USUARIO", usuario.getId(), ip, userAgent);
-            throw new UnauthorizedException("Código 2FA inválido");
+        if (twoFactorService.isEnabled(usuario.getId())) {
+            if (request.totp() == null || request.totp().isBlank()) {
+                throw new UnauthorizedException("MFA_REQUIRED",
+                        "Ingresá el código de autenticación en dos pasos");
+            }
+            if (!twoFactorService.verifyLogin(usuario.getId(), request.totp())) {
+                auditService.log("LOGIN_2FA_FAILED", usuario.getId(), "USUARIO", usuario.getId(), ip, userAgent);
+                throw new UnauthorizedException("Código 2FA inválido");
+            }
         }
         usuario.setFailedAttempts(0);
         usuario.setLockedUntil(null);
@@ -143,6 +148,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserResponse updateProfile(JwtPrincipal principal, UpdateProfileRequest request) {
         Usuario usuario = findUser(principal.userId());
+        boolean emailChanged = false;
         if (request.email() != null && !request.email().isBlank()
                 && !request.email().trim().equalsIgnoreCase(usuario.getEmail())) {
             String email = request.email().trim().toLowerCase();
@@ -150,11 +156,18 @@ public class AuthServiceImpl implements AuthService {
                 throw new ConflictException("EMAIL_TAKEN", "El email ya está registrado");
             }
             usuario.setEmail(email);
+            emailChanged = true;
         }
         if (request.nombre() != null) {
             usuario.setNombre(request.nombre().trim());
         }
-        return userMapper.toResponse(usuarioRepository.save(usuario));
+        Usuario saved = usuarioRepository.save(usuario);
+        if (emailChanged) {
+            saved.setEmailVerified(false);
+            saved = usuarioRepository.save(saved);
+            emailVerificationService.request(saved.getId());
+        }
+        return userMapper.toResponse(saved);
     }
 
     @Override

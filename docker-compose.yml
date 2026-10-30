@@ -42,6 +42,7 @@ services:
       DB_USERNAME: ${DB_USERNAME:-notas}
       DB_PASSWORD: ${DB_PASSWORD:-notas}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET es obligatorio}
+      APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       STORAGE_PROVIDER: minio
@@ -56,9 +57,11 @@ services:
       CLAMAV_HOST: clamav
       CLAMAV_PORT: 3310
       MAIL_PROVIDER: ${MAIL_PROVIDER:-mailhog}
-      MAIL_HOST: mailhog
-      MAIL_PORT: 1025
-      FRONTEND_URL: http://localhost:3000
+      MAIL_HOST: ${MAIL_HOST:-mailhog}
+      MAIL_PORT: ${MAIL_PORT:-1025}
+      MAIL_FROM: ${MAIL_FROM:-notasapp@local.test}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
     depends_on:
       mysql:
         condition: service_healthy

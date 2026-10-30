@@ -31,9 +31,19 @@ public/icons/   iconos de la PWA (192, 512, maskable, apple-touch)
 
 El access token vive en una variable de módulo (`src/auth/tokenStore.ts`), nunca en `localStorage`/`sessionStorage`. El refresh usa cookie `HttpOnly` y una cola single-flight; `BroadcastChannel` coordina pestañas. Un 401 de `/auth/*` no dispara refresh.
 
+El login es en dos pasos: primero usuario y contraseña; si la cuenta tiene 2FA, el backend responde `MFA_REQUIRED` y la UI muestra el campo de código sin recargar. Si el email no está verificado, ofrece reenviar el enlace.
+
 ## Diseño
 
-Antes de tocar UI, leer `../AGENTS.md`, `AGENTS.md` y `../docs/DESIGN_DIRECTION.md`. Solo se usan tokens `var(--…)` de `src/styles/tokens.css`; no se hardcodean colores, espacios, tipografía, sombras, radios ni duraciones. Los temas `light-neumorphic` y `dark-purple` se cambian por reemplazo de tokens.
+Antes de tocar UI, leer `../AGENTS.md`, `AGENTS.md` y `../docs/DESIGN_DIRECTION.md`. Solo se usan tokens `var(--…)` de `src/styles/tokens.css`; no se hardcodean colores, espacios, tipografía, sombras, radios ni duraciones.
+
+## Temas
+
+Cuatro paletas completas: `light-cobalt` y `dark-aurora` (nuevas, default de `system`) y `light-neumorphic` / `dark-purple` (identidad anterior). El `ThemePicker` está en la sidebar, en la hoja “Más” y en Configuración; persiste en `notasapp.theme` y el script anti-FOUC aplica el tema antes del primer render.
+
+## Navegación
+
+Desktop: sidebar agrupada en Espacio / Organizar / Administración. Mobile: barra superior con marca y notificaciones, barra inferior con Inicio, Notas, Agenda, Calendario y “Más”. La hoja “Más” concentra el resto de secciones, el tema, el usuario y el cierre de sesión.
 
 ## PWA
 

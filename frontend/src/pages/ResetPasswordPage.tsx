@@ -4,6 +4,7 @@ import { resetPassword } from '@/api/auth';
 import { useToast } from '@/context/ToastContext';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
+import { AuthLayout } from '@/components/auth/AuthLayout';
 import type { ApiError } from '@/types/api';
 
 export function ResetPasswordPage() {
@@ -27,23 +28,42 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <p className="eyebrow">Nueva contraseña</p>
-        <h1>Restablecer contraseña</h1>
-        {!token ? (
-          <div className="error-banner" role="alert">El enlace no contiene un token válido.</div>
-        ) : (
-          <form className="auth-form" onSubmit={submit}>
-            {error ? <div className="error-banner" role="alert">{error.message}</div> : null}
-            <Field id="reset-password" label="Nueva contraseña" hint="Mínimo 10 caracteres, mayúscula, minúscula y número">
-              <input id="reset-password" className="input" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-            </Field>
-            <Button type="submit" variant="primary">Guardar contraseña</Button>
-          </form>
-        )}
-        <p className="auth-footer"><Link to="/login">Volver a entrar</Link></p>
-      </div>
-    </div>
+    <AuthLayout
+      title="Restablecer contraseña"
+      subtitle="Elegí una contraseña nueva para tu cuenta."
+      footer={<Link to="/login">Volver a entrar</Link>}
+    >
+      {!token ? (
+        <div className="error-banner" role="alert">
+          El enlace no contiene un token válido.
+        </div>
+      ) : (
+        <form className="auth-form" onSubmit={submit}>
+          {error ? (
+            <div className="error-banner" role="alert">
+              {error.message}
+            </div>
+          ) : null}
+          <Field
+            id="reset-password"
+            label="Nueva contraseña"
+            hint="Mínimo 10 caracteres, con mayúscula, minúscula y número."
+          >
+            <input
+              id="reset-password"
+              className="input"
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </Field>
+          <Button type="submit" variant="primary">
+            Guardar contraseña
+          </Button>
+        </form>
+      )}
+    </AuthLayout>
   );
 }

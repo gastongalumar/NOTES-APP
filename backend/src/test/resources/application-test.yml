@@ -36,6 +36,7 @@ app:
     login-rate-limit: 50
     register-rate-limit: 50
     refresh-rate-limit: 50
+    email-resend-rate-limit: 50
   attachments:
     provider: local
     local-path: ${java.io.tmpdir}/notasapp-test

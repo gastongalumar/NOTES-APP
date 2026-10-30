@@ -7,6 +7,7 @@ interface ProblemBody {
   detail?: string;
   title?: string;
   errors?: Record<string, string>;
+  email?: string;
 }
 
 export function normalizeError(error: unknown): ApiError {
@@ -24,6 +25,7 @@ export function normalizeError(error: unknown): ApiError {
           ? 'No se pudo conectar con el servidor'
           : 'Ocurrió un error inesperado'),
       fieldErrors: body?.errors,
+      email: body?.email,
     };
   }
   if (error instanceof Error) {

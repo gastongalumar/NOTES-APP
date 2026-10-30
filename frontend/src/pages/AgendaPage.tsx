@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import type { NoteSummary } from '@/types/api';
 import { today, upcoming } from '@/api/notes';
 import { NoteCard } from '@/components/notes/NoteCard';
@@ -32,10 +33,21 @@ export function AgendaPage({ kind }: AgendaPageProps) {
           <p className="eyebrow">Agenda</p>
           <h1>{title}</h1>
         </div>
-        <p className="subtle">Vencimientos y recordatorios de tus notas.</p>
+        <div className="segmented" aria-label="Rango de la agenda">
+          <NavLink to="/today" className="segmented__item" end>
+            Hoy
+          </NavLink>
+          <NavLink to="/upcoming" className="segmented__item" end>
+            7 días
+          </NavLink>
+        </div>
       </header>
 
-      {error ? <div className="error-banner" role="alert">{error}</div> : null}
+      {error ? (
+        <div className="error-banner" role="alert">
+          {error}
+        </div>
+      ) : null}
 
       {loading ? (
         <div className="empty-state">Cargando agenda…</div>
@@ -46,7 +58,7 @@ export function AgendaPage({ kind }: AgendaPageProps) {
       ) : (
         <div className="card-grid">
           {notes.map((note) => (
-            <NoteCard key={note.id} note={note} />
+            <NoteCard key={note.id} note={note} showEdit={false} />
           ))}
         </div>
       )}

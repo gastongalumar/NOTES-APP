@@ -21,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
 
+    private static final String RESEND_EMAIL_PATH = "/api/v1/auth/email/resend";
+
     private final AuthProperties properties;
     private final ObjectMapper objectMapper;
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
@@ -35,17 +37,29 @@ public class RateLimitFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         return !(path.equals("/api/v1/auth/login")
                 || path.equals("/api/v1/auth/register")
-                || path.equals("/api/v1/auth/refresh"));
+                || path.equals("/api/v1/auth/refresh")
+                || path.equals(RESEND_EMAIL_PATH));
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
-        int limit = path.endsWith("login") ? properties.getLoginRateLimit()
-                : path.endsWith("register") ? properties.getRegisterRateLimit()
-                : properties.getRefreshRateLimit();
-        Duration window = path.endsWith("register") ? Duration.ofHours(1) : Duration.ofMinutes(1);
+        int limit;
+        Duration window;
+        if (path.equals(RESEND_EMAIL_PATH)) {
+            limit = properties.getEmailResendRateLimit();
+            window = Duration.ofHours(1);
+        } else if (path.endsWith("login")) {
+            limit = properties.getLoginRateLimit();
+            window = Duration.ofMinutes(1);
+        } else if (path.endsWith("register")) {
+            limit = properties.getRegisterRateLimit();
+            window = Duration.ofHours(1);
+        } else {
+            limit = properties.getRefreshRateLimit();
+            window = Duration.ofMinutes(1);
+        }
         String key = clientIp(request) + ":" + path;
         Bucket bucket = buckets.computeIfAbsent(key, ignored -> Bucket.builder()
                 .addLimit(Bandwidth.classic(limit, Refill.greedy(limit, window)))

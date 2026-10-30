@@ -118,38 +118,40 @@ export function NotesPage({ archived, title = 'Tus notas' }: NotesPageProps) {
           value={q}
           onChange={(event) => setQ(event.target.value)}
         />
-        <select
-          className="select"
-          aria-label="Filtrar por categoría"
-          value={categoryId}
-          onChange={(event) => {
-            setPage(0);
-            setCategoryId(event.target.value);
-          }}
-        >
-          <option value="">Todas las categorías</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.nombre}
-            </option>
-          ))}
-        </select>
-        <select
-          className="select"
-          aria-label="Filtrar por tag"
-          value={tagId}
-          onChange={(event) => {
-            setPage(0);
-            setTagId(event.target.value);
-          }}
-        >
-          <option value="">Todos los tags</option>
-          {tags.map((tag) => (
-            <option key={tag.id} value={tag.id}>
-              {tag.nombre}
-            </option>
-          ))}
-        </select>
+        <div className="toolbar__filters">
+          <select
+            className="select"
+            aria-label="Filtrar por categoría"
+            value={categoryId}
+            onChange={(event) => {
+              setPage(0);
+              setCategoryId(event.target.value);
+            }}
+          >
+            <option value="">Todas las categorías</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.nombre}
+              </option>
+            ))}
+          </select>
+          <select
+            className="select"
+            aria-label="Filtrar por tag"
+            value={tagId}
+            onChange={(event) => {
+              setPage(0);
+              setTagId(event.target.value);
+            }}
+          >
+            <option value="">Todos los tags</option>
+            {tags.map((tag) => (
+              <option key={tag.id} value={tag.id}>
+                {tag.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
         <Button type="submit">Buscar</Button>
       </form>
 

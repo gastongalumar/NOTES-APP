@@ -6,11 +6,18 @@ interface DialogProps {
   onClose: () => void;
   children: ReactNode;
   footer?: ReactNode;
+  variant?: 'center' | 'sheet';
+  id?: string;
 }
 
-export function Dialog({ open, title, onClose, children, footer }: DialogProps) {
+export function Dialog({ open, title, onClose, children, footer, variant = 'center', id }: DialogProps) {
   const ref = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) return;
@@ -23,7 +30,7 @@ export function Dialog({ open, title, onClose, children, footer }: DialogProps) 
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (event.key !== 'Tab' || !dialog) return;
@@ -50,18 +57,25 @@ export function Dialog({ open, title, onClose, children, footer }: DialogProps) 
       document.removeEventListener('keydown', onKeyDown);
       previousFocus.current?.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
   return (
     <div
-      className="modal-backdrop"
+      className={`modal-backdrop${variant === 'sheet' ? ' modal-backdrop-sheet' : ''}`}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="dialog" role="dialog" aria-modal="true" aria-label={title} ref={ref}>
+      <div
+        className={`dialog${variant === 'sheet' ? ' dialog-sheet' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        id={id}
+        ref={ref}
+      >
         <header className="dialog-header">
           <h2>{title}</h2>
           <button type="button" className="button button-ghost" onClick={onClose} aria-label="Cerrar">

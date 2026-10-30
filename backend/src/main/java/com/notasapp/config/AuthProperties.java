@@ -17,5 +17,6 @@ public class AuthProperties {
     private int loginRateLimit = 5;
     private int registerRateLimit = 3;
     private int refreshRateLimit = 30;
+    private int emailResendRateLimit = 3;
     private boolean requireEmailVerification = true;
 }

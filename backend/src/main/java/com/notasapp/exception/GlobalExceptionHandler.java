@@ -29,6 +29,16 @@ public class GlobalExceptionHandler {
         return response(ex.getStatus(), ex.getCode(), ex.getMessage(), request, null);
     }
 
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    public ResponseEntity<ProblemDetail> handleEmailNotVerified(EmailNotVerifiedException ex,
+                                                                HttpServletRequest request) {
+        ResponseEntity<ProblemDetail> result = response(ex.getStatus(), ex.getCode(), ex.getMessage(), request, null);
+        if (result.getBody() != null) {
+            result.getBody().setProperty("email", ex.getEmail());
+        }
+        return result;
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> errors = new LinkedHashMap<>();

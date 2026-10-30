@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
+import { AuthLayout } from '@/components/auth/AuthLayout';
 import type { ApiError } from '@/types/api';
 
 export function RegisterPage() {
@@ -32,7 +33,7 @@ export function RegisterPage() {
     setLoading(true);
     try {
       await register(form);
-      push('Cuenta creada. Ya podés iniciar sesión.', 'success');
+      push('Cuenta creada. Revisá tu email para verificarla.', 'success');
       navigate('/login', { replace: true });
     } catch (caught) {
       setError(caught as ApiError);
@@ -42,33 +43,70 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <p className="eyebrow">Empezá en un minuto</p>
-        <h1>Crear cuenta</h1>
-        <p className="muted">Tus datos quedan bajo tu control.</p>
-        <form className="auth-form" onSubmit={submit}>
-          {error ? <div className="error-banner" role="alert">{error.message}</div> : null}
-          <Field id="nombre" label="Nombre">
-            <input id="nombre" className="input" autoComplete="name" value={form.nombre} onChange={(e) => update('nombre', e.target.value)} />
-          </Field>
-          <Field id="username" label="Usuario">
-            <input id="username" className="input" autoComplete="username" value={form.username} onChange={(e) => update('username', e.target.value)} required />
-          </Field>
-          <Field id="email" label="Email">
-            <input id="email" className="input" type="email" autoComplete="email" value={form.email} onChange={(e) => update('email', e.target.value)} required />
-          </Field>
-          <Field id="password" label="Contraseña" hint="Mínimo 10 caracteres">
-            <input id="password" className="input" type="password" autoComplete="new-password" value={form.password} onChange={(e) => update('password', e.target.value)} required />
-          </Field>
-          <Button type="submit" variant="primary" disabled={loading}>
-            {loading ? 'Creando…' : 'Crear cuenta'}
-          </Button>
-        </form>
-        <p className="auth-footer">
+    <AuthLayout
+      title="Crear cuenta"
+      subtitle="Tus notas quedan bajo tu control."
+      footer={
+        <span>
           ¿Ya tenés cuenta? <Link to="/login">Entrar</Link>
-        </p>
-      </div>
-    </div>
+        </span>
+      }
+    >
+      <form className="auth-form" onSubmit={submit}>
+        {error ? (
+          <div className="error-banner" role="alert">
+            {error.message}
+          </div>
+        ) : null}
+        <Field id="nombre" label="Nombre" hint="Opcional, para mostrarlo en la app.">
+          <input
+            id="nombre"
+            className="input"
+            autoComplete="name"
+            value={form.nombre}
+            onChange={(event) => update('nombre', event.target.value)}
+          />
+        </Field>
+        <Field id="username" label="Usuario">
+          <input
+            id="username"
+            className="input"
+            autoComplete="username"
+            value={form.username}
+            onChange={(event) => update('username', event.target.value)}
+            required
+          />
+        </Field>
+        <Field id="email" label="Email" hint="Te vamos a enviar un enlace para verificarlo.">
+          <input
+            id="email"
+            className="input"
+            type="email"
+            autoComplete="email"
+            value={form.email}
+            onChange={(event) => update('email', event.target.value)}
+            required
+          />
+        </Field>
+        <Field
+          id="password"
+          label="Contraseña"
+          hint="Mínimo 10 caracteres, con mayúscula, minúscula y número."
+        >
+          <input
+            id="password"
+            className="input"
+            type="password"
+            autoComplete="new-password"
+            value={form.password}
+            onChange={(event) => update('password', event.target.value)}
+            required
+          />
+        </Field>
+        <Button type="submit" variant="primary" disabled={loading}>
+          {loading ? 'Creando…' : 'Crear cuenta'}
+        </Button>
+      </form>
+    </AuthLayout>
   );
 }

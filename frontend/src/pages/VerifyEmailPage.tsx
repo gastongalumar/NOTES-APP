@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { verifyEmail } from '@/api/auth';
+import { AuthLayout } from '@/components/auth/AuthLayout';
 
 export function VerifyEmailPage() {
   const [params] = useSearchParams();
@@ -23,13 +24,33 @@ export function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <p className="eyebrow">Verificación</p>
-        <h1>{status === 'ok' ? 'Email verificado' : status === 'error' ? 'No se pudo verificar' : 'Verificando…'}</h1>
-        {message ? <div className="error-banner" role="alert">{message}</div> : null}
-        <p className="auth-footer"><Link to="/login">Volver a entrar</Link></p>
-      </div>
-    </div>
+    <AuthLayout
+      title={
+        status === 'ok'
+          ? 'Email verificado'
+          : status === 'error'
+            ? 'No se pudo verificar'
+            : 'Verificando…'
+      }
+      subtitle={
+        status === 'ok'
+          ? 'Ya podés iniciar sesión con tu cuenta.'
+          : status === 'error'
+            ? 'El enlace puede haber expirado o ya haberse usado.'
+            : 'Estamos confirmando tu email.'
+      }
+      footer={<Link to="/login">Ir a entrar</Link>}
+    >
+      {message ? (
+        <div className="error-banner" role="alert">
+          {message}
+        </div>
+      ) : null}
+      {status === 'ok' ? (
+        <p className="auth-success" role="status">
+          Tu email quedó confirmado.
+        </p>
+      ) : null}
+    </AuthLayout>
   );
 }

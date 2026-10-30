@@ -468,7 +468,7 @@
 .auth-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+  grid-template-columns: minmax(0, 1fr) clamp(384px, 30%, 440px);
 }
 
 .auth-shell--photo {
@@ -479,14 +479,28 @@
   background-repeat: no-repeat;
 }
 
-.auth-shell--photo .auth-brand,
-.auth-shell--photo .auth-panel {
-  background: transparent;
-}
-
 /* La foto es continua: el borde de columna se vería como una costura. */
 .auth-shell--photo .auth-brand {
+  background: transparent;
   border-right: 0;
+}
+
+/* La columna del formulario es una capa de vidrio sobre la foto. */
+.auth-shell--photo .auth-panel {
+  background: var(--auth-glass-panel);
+  border-left: var(--border-width) solid var(--auth-glass-panel-border);
+  -webkit-backdrop-filter: blur(var(--auth-glass-blur)) saturate(1.15);
+  backdrop-filter: blur(var(--auth-glass-blur)) saturate(1.15);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .auth-shell--photo .auth-panel {
+    background: var(--color-bg);
+  }
+
+  .auth-shell--photo .auth-card {
+    background: var(--color-surface-raised);
+  }
 }
 
 .auth-brand {
@@ -494,7 +508,7 @@
   flex-direction: column;
   justify-content: space-between;
   gap: var(--space-8);
-  padding: var(--space-12);
+  padding: var(--space-8);
   background: var(--color-surface);
   color: var(--auth-brand-text);
   border-right: var(--border-width) solid var(--color-border);
@@ -503,6 +517,15 @@
 .auth-brand .brand,
 .auth-brand .brand:hover {
   color: var(--auth-brand-text);
+}
+
+.auth-brand .brand {
+  font-size: var(--text-lg);
+}
+
+.auth-brand .brand-mark {
+  width: var(--space-8);
+  height: var(--space-8);
 }
 
 .auth-brand :focus-visible {
@@ -517,14 +540,15 @@
 }
 
 .auth-brand__title {
-  font-size: var(--text-3xl);
+  font-size: var(--auth-brand-title);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-tight);
+  max-width: 34rem;
 }
 
 .auth-brand__text {
   color: var(--auth-brand-text-muted);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   max-width: 30rem;
 }
 
@@ -572,23 +596,36 @@
 
 .auth-card {
   width: 100%;
-  max-width: 420px;
-  padding: var(--space-8);
+  max-width: 92%;
+  padding: var(--space-6);
   background: var(--color-surface-raised);
   border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-raised);
+}
+
+/* La tarjeta del formulario también es vidrio, sobre el panel. */
+.auth-shell--photo .auth-card {
+  background: var(--auth-glass-card);
+  border-color: var(--auth-glass-card-border);
+  box-shadow: var(--auth-glass-shadow);
+  -webkit-backdrop-filter: blur(var(--auth-glass-card-blur)) saturate(1.1);
+  backdrop-filter: blur(var(--auth-glass-card-blur)) saturate(1.1);
 }
 
 .auth-card__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  margin-bottom: var(--space-6);
+  gap: var(--space-1);
+  margin-bottom: var(--space-5);
 }
 
 .auth-card__header h1 {
-  font-size: var(--text-2xl);
+  font-size: var(--text-xl);
+}
+
+.auth-card__header .muted {
+  font-size: var(--text-sm);
 }
 
 .auth-form {
@@ -1151,6 +1188,18 @@
     grid-template-columns: 1fr;
   }
 
+  /* Una sola columna: el vidrio va solo en la tarjeta, no en toda la pantalla. */
+  .auth-shell--photo .auth-panel {
+    background: transparent;
+    border-left: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .auth-card {
+    max-width: 420px;
+  }
+
   .auth-brand {
     display: none;
   }
@@ -1188,10 +1237,10 @@
 
   .auth-shell--photo .auth-card {
     padding: var(--space-6);
-    border: var(--border-width) solid var(--color-border);
+    border: var(--border-width) solid var(--auth-glass-card-border);
     border-radius: var(--radius-lg);
-    background: var(--color-surface-raised);
-    box-shadow: var(--shadow-raised);
+    background: var(--auth-glass-card);
+    box-shadow: var(--auth-glass-shadow);
   }
 
   .auth-panel {

@@ -143,6 +143,17 @@
   --auth-brand-accent: var(--color-accent);
   --auth-brand-link: var(--color-accent);
   --auth-brand-focus: var(--color-focus);
+
+  /* Glass del shell de autenticación */
+  --auth-brand-title: clamp(2rem, 3vw, 2.5rem);
+  --auth-glass-blur: 26px;
+  --auth-glass-card-blur: 18px;
+  --auth-glass-panel: rgba(250, 247, 241, 0.42);
+  --auth-glass-panel-border: rgba(255, 255, 255, 0.4);
+  --auth-glass-card: rgba(255, 255, 255, 0.55);
+  --auth-glass-card-border: rgba(255, 255, 255, 0.75);
+  --auth-glass-shadow: 0 30px 80px rgba(33, 31, 28, 0.16),
+    0 2px 8px rgba(33, 31, 28, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 [data-theme='light-neumorphic'] {
@@ -199,6 +210,12 @@
   --auth-brand-accent: var(--neutral-900);
   --auth-brand-link: var(--neutral-900);
   --auth-brand-focus: var(--neutral-950);
+  --auth-glass-panel: rgba(12, 10, 16, 0.62);
+  --auth-glass-panel-border: rgba(255, 255, 255, 0.08);
+  --auth-glass-card: rgba(33, 27, 40, 0.72);
+  --auth-glass-card-border: rgba(255, 255, 255, 0.14);
+  --auth-glass-shadow: 0 30px 80px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Tema claro cobalto: papel frío, acento azul profundo, superficies planas. */
@@ -246,6 +263,13 @@
   --modal-bg: var(--color-surface-raised);
   --toast-bg: #101828;
   --toast-text: #ffffff;
+
+  --auth-glass-panel: rgba(246, 249, 255, 0.4);
+  --auth-glass-panel-border: rgba(255, 255, 255, 0.55);
+  --auth-glass-card: rgba(255, 255, 255, 0.58);
+  --auth-glass-card-border: rgba(255, 255, 255, 0.8);
+  --auth-glass-shadow: 0 30px 80px rgba(16, 24, 40, 0.16),
+    0 2px 8px rgba(16, 24, 40, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 /* Tema oscuro aurora: violeta profundo, acento lavanda. */
@@ -298,6 +322,12 @@
   --auth-brand-accent: var(--neutral-900);
   --auth-brand-link: var(--neutral-900);
   --auth-brand-focus: var(--neutral-950);
+  --auth-glass-panel: rgba(9, 8, 16, 0.62);
+  --auth-glass-panel-border: rgba(255, 255, 255, 0.08);
+  --auth-glass-card: rgba(26, 23, 40, 0.72);
+  --auth-glass-card-border: rgba(255, 255, 255, 0.14);
+  --auth-glass-shadow: 0 30px 80px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Previews del selector de tema (deben existir para los cuatro temas a la vez). */

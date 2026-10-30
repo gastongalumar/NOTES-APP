@@ -588,6 +588,12 @@
   text-align: center;
 }
 
+.auth-install {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-4);
+}
+
 .auth-step {
   display: flex;
   flex-wrap: wrap;

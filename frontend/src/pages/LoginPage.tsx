@@ -5,6 +5,7 @@ import { resendEmailVerification } from '@/api/auth';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
 import { AuthLayout } from '@/components/auth/AuthLayout';
+import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 import type { ApiError } from '@/types/api';
 
 type Step = 'credentials' | 'code';
@@ -188,6 +189,10 @@ export function LoginPage() {
           </button>
         </div>
       )}
+
+      <div className="auth-install">
+        <InstallPrompt />
+      </div>
     </AuthLayout>
   );
 }

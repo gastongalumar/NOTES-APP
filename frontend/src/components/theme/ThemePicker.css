@@ -23,16 +23,19 @@
 
 .theme-picker__panel {
   position: absolute;
-  right: 0;
+  left: 0;
+  right: auto;
   z-index: var(--z-banner);
   width: max-content;
   min-width: 240px;
+  max-width: calc(100vw - var(--space-6));
   padding: var(--space-3);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-surface-raised);
   box-shadow: var(--shadow-overlay);
 }
+
 
 .theme-picker--down .theme-picker__panel {
   top: calc(100% + var(--space-2));

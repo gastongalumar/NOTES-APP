@@ -132,6 +132,9 @@
   --qr-bg: var(--neutral-0);
   --qr-fg: var(--neutral-950);
   --auth-photo: url('/images/fondo-notas.jpg');
+  --auth-photo-position: center;
+  /* En vertical conviene el encuadre con las formas, no el centro liso. */
+  --auth-photo-position-mobile: 62% 50%;
   --auth-photo-veil: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.04) 0%,

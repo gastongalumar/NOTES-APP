@@ -474,7 +474,7 @@
 .auth-shell--photo {
   background-color: var(--color-bg);
   background-image: var(--auth-photo-veil), var(--auth-photo);
-  background-position: center;
+  background-position: var(--auth-photo-position);
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -1188,12 +1188,13 @@
     grid-template-columns: 1fr;
   }
 
-  /* Una sola columna: el vidrio va solo en la tarjeta, no en toda la pantalla. */
+  /* Una sola columna: el velo de vidrio cubre toda la pantalla. */
+  .auth-shell--photo {
+    background-position: var(--auth-photo-position-mobile);
+  }
+
   .auth-shell--photo .auth-panel {
-    background: transparent;
     border-left: 0;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
   }
 
   .auth-card {

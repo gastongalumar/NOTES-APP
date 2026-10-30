@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
   return (
-    <div className="auth-shell">
+    <div className="auth-shell auth-shell--photo">
       <section className="auth-brand" aria-label="NotasApp">
         <Link to="/" className="brand auth-brand__lockup">
           <span className="brand-mark" aria-hidden="true">

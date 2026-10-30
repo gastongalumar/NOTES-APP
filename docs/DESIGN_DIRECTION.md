@@ -78,7 +78,7 @@ Ambos temas se implementan **reemplazando tokens** en `[data-theme]`; no hay CSS
 - **OfflineBanner:** aviso fijo y no bloqueante cuando `navigator.onLine` es falso; `role="status"`.
 - **PwaUpdatePrompt:** aviso de versión nueva con “Actualizar” y “Ahora no”; nunca actualiza sin confirmación.
 - **InstallPrompt:** botón “Instalar app” solo cuando el navegador emite `beforeinstallprompt`; no se simula en iOS.
-- **AuthLayout:** dos columnas en desktop (marca + formulario) y una sola en móvil; el lockup de marca se muestra una vez por viewport.
+- **AuthLayout:** dos columnas en desktop (marca + formulario) y una sola en móvil; el lockup de marca se muestra una vez por viewport. La foto `fondo-notas` cubre el shell completo y la tarjeta del formulario flota sobre ella con superficie propia (también en móvil). El texto de marca usa los tokens `--auth-brand-*` con tinta oscura en todos los temas, porque la foto es clara; el velo `--auth-photo-veil` es neutro y bajo. La foto es decorativa (sin texto alternativo) y cada texto conserva AA.
 - **ThemePicker:** botón compacto con panel de radios nativos; cinco opciones (Sistema, Cobalto, Aurora, Papel, Tinta). En móvil se usa la misma lista dentro de la hoja “Más”.
 - **Navegación móvil:** barra inferior fija con cinco destinos (Inicio, Notas, Agenda, Calendario, Más). “Más” abre una hoja con el resto de secciones, tema, usuario y cierre de sesión. En desktop se mantiene la sidebar agrupada por Espacio / Organizar / Administración.
 - **2FA:** el secreto se ofrece como QR (`qrcode.react`) y como texto copiable; los códigos de recuperación se muestran una sola vez.
@@ -108,6 +108,7 @@ Ambos temas se implementan **reemplazando tokens** en `[data-theme]`; no hay CSS
 6. `--space-14` (56px) define la altura de la barra superior móvil; `--qr-bg`/`--qr-fg` garantizan que el QR de 2FA se pueda escanear en ambos temas.
 7. El manifest no puede leer CSS: `vite.config.ts` espeja `--color-bg` de `light-cobalt` para `background_color` y `theme_color`. Si cambia ese token, se actualizan ambos valores. El `theme-color` en runtime sí se sincroniza desde el token.
 8. Los tokens `--preview-*` existen solo para dibujar los swatches del selector de tema, porque necesita mostrar las cuatro paletas al mismo tiempo.
+9. `--auth-photo` apunta a `frontend/public/images/fondo-notas.jpg` y `--auth-photo-veil` es un velo neutro común. Como la foto es clara, el texto de marca usa `--auth-brand-text`, `--auth-brand-text-muted`, `--auth-brand-accent`, `--auth-brand-link` y `--auth-brand-focus` con tinta oscura también en temas oscuros. La tarjeta del formulario mantiene `--card-bg` y su superficie en móvil; no se usa CSS condicional por tema.
 
 ## Estados de producto
 

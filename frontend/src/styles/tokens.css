@@ -131,6 +131,18 @@
   --toast-text: var(--neutral-0);
   --qr-bg: var(--neutral-0);
   --qr-fg: var(--neutral-950);
+  --auth-photo: url('/images/fondo-notas.jpg');
+  --auth-photo-veil: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.18) 55%,
+    rgba(255, 255, 255, 0.32) 100%
+  );
+  --auth-brand-text: var(--color-text);
+  --auth-brand-text-muted: var(--neutral-700);
+  --auth-brand-accent: var(--color-accent);
+  --auth-brand-link: var(--color-accent);
+  --auth-brand-focus: var(--color-focus);
 }
 
 [data-theme='light-neumorphic'] {
@@ -182,6 +194,11 @@
   --modal-bg: var(--color-surface-raised);
   --toast-bg: #f1ecf5;
   --toast-text: #17131b;
+  --auth-brand-text: var(--neutral-950);
+  --auth-brand-text-muted: var(--neutral-700);
+  --auth-brand-accent: var(--neutral-900);
+  --auth-brand-link: var(--neutral-900);
+  --auth-brand-focus: var(--neutral-950);
 }
 
 /* Tema claro cobalto: papel frío, acento azul profundo, superficies planas. */
@@ -276,6 +293,11 @@
   --modal-bg: var(--color-surface-raised);
   --toast-bg: #f1eefb;
   --toast-text: #12101c;
+  --auth-brand-text: var(--neutral-950);
+  --auth-brand-text-muted: var(--neutral-700);
+  --auth-brand-accent: var(--neutral-900);
+  --auth-brand-link: var(--neutral-900);
+  --auth-brand-focus: var(--neutral-950);
 }
 
 /* Previews del selector de tema (deben existir para los cuatro temas a la vez). */

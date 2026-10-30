@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
             auditService.log("LOGIN_FAILED", usuario.getId(), "USUARIO", usuario.getId(), ip, userAgent);
             throw new UnauthorizedException("Credenciales inválidas");
         }
-        if (!usuario.isEmailVerified()) {
+        if (authProperties.isRequireEmailVerification() && !usuario.isEmailVerified()) {
             throw new EmailNotVerifiedException(usuario.getEmail());
         }
         if (twoFactorService.isEnabled(usuario.getId())

@@ -83,6 +83,7 @@ app:
     login-rate-limit: 5
     register-rate-limit: 3
     refresh-rate-limit: 30
+    require-email-verification: ${REQUIRE_EMAIL_VERIFICATION:true}
   attachments:
     provider: ${STORAGE_PROVIDER:local}
     local-path: ${STORAGE_LOCAL_PATH:./storage}

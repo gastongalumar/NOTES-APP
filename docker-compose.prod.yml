@@ -66,6 +66,9 @@ services:
       MAIL_PORT: 1025
       MAIL_FROM: ${MAIL_FROM:-no-reply@notas.programandos.site}
       FRONTEND_URL: ${FRONTEND_URL:-https://notas.programandos.site}
+      # Sin proveedor real de mails (MailHog interno) no se puede verificar el email.
+      # Con Resend configurado, cambiar a "true".
+      REQUIRE_EMAIL_VERIFICATION: "false"
       ANTIVIRUS_ENABLED: "false"
       TZ: ${TZ:-America/Argentina/Buenos_Aires}
     volumes:

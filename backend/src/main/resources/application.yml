@@ -55,6 +55,11 @@ management:
   endpoint:
     health:
       show-details: never
+  health:
+    # Con MAIL_PROVIDER=resend no hay SMTP que monitorear: el indicador de
+    # correo intentaba conectarse a mailhog y dejaba el health en DOWN.
+    mail:
+      enabled: ${MAIL_HEALTH_ENABLED:false}
 
 springdoc:
   api-docs:

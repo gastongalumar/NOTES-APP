@@ -141,7 +141,6 @@
   --auth-brand-text: var(--color-text);
   --auth-brand-text-muted: var(--neutral-700);
   --auth-brand-accent: var(--color-accent);
-  --auth-brand-link: var(--color-accent);
   --auth-brand-focus: var(--color-focus);
 }
 
@@ -197,7 +196,6 @@
   --auth-brand-text: var(--neutral-950);
   --auth-brand-text-muted: var(--neutral-700);
   --auth-brand-accent: var(--neutral-900);
-  --auth-brand-link: var(--neutral-900);
   --auth-brand-focus: var(--neutral-950);
 }
 
@@ -296,7 +294,6 @@
   --auth-brand-text: var(--neutral-950);
   --auth-brand-text-muted: var(--neutral-700);
   --auth-brand-accent: var(--neutral-900);
-  --auth-brand-link: var(--neutral-900);
   --auth-brand-focus: var(--neutral-950);
 }
 

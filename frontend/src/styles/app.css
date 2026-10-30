@@ -484,6 +484,11 @@
   background: transparent;
 }
 
+/* La foto es continua: el borde de columna se vería como una costura. */
+.auth-shell--photo .auth-brand {
+  border-right: 0;
+}
+
 .auth-brand {
   display: flex;
   flex-direction: column;
@@ -609,18 +614,6 @@
   color: var(--color-text-muted);
   font-size: var(--text-sm);
   text-align: center;
-}
-
-.auth-shell--photo .auth-panel__foot {
-  color: var(--auth-brand-text-muted);
-}
-
-.auth-shell--photo .auth-panel__foot a {
-  color: var(--auth-brand-link);
-}
-
-.auth-shell--photo .auth-panel__foot a:hover {
-  color: var(--auth-brand-text);
 }
 
 .auth-install {

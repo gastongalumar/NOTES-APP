@@ -43,6 +43,7 @@ public class BootstrapAdminRunner implements ApplicationRunner {
             usuario.setEnabled(true);
         }
         usuario.getRoles().add(adminRole);
+        usuario.setEmailVerified(true);
         usuarioRepository.save(usuario);
     }
 

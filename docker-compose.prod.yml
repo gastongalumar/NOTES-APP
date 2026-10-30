@@ -32,20 +32,6 @@ services:
     networks:
       - notas_net
 
-  minio:
-    image: minio/minio:latest
-    container_name: notas-minio
-    restart: unless-stopped
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY es obligatorio}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:?MINIO_SECRET_KEY es obligatorio}
-      TZ: ${TZ:-America/Argentina/Buenos_Aires}
-    volumes:
-      - notas_minio_data:/data
-    networks:
-      - notas_net
-
   mailhog:
     image: mailhog/mailhog:latest
     container_name: notas-mailhog
@@ -70,11 +56,8 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET es obligatorio}
       COOKIE_SECURE: "true"
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://notas.programandos.site}
-      STORAGE_PROVIDER: minio
-      MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY es obligatorio}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:?MINIO_SECRET_KEY es obligatorio}
-      MINIO_BUCKET: ${MINIO_BUCKET:-notasapp}
+      STORAGE_PROVIDER: local
+      STORAGE_LOCAL_PATH: /app/storage
       BOOTSTRAP_ADMIN_USERNAME: ${BOOTSTRAP_ADMIN_USERNAME:-}
       BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
       BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
@@ -85,6 +68,8 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-https://notas.programandos.site}
       ANTIVIRUS_ENABLED: "false"
       TZ: ${TZ:-America/Argentina/Buenos_Aires}
+    volumes:
+      - notas_storage:/app/storage
     expose:
       - "8080"
     healthcheck:
@@ -118,7 +103,7 @@ services:
 
 volumes:
   notas_mysql_data:
-  notas_minio_data:
+  notas_storage:
 
 networks:
   notas_net:

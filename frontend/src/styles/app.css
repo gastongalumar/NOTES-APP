@@ -625,7 +625,7 @@
 }
 
 .auth-card__header .muted {
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
 }
 
 .auth-form {

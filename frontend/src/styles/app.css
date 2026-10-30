@@ -616,6 +616,19 @@
   text-align: center;
 }
 
+/* El pie queda fuera de la tarjeta, sobre la foto: usa tinta de marca. */
+.auth-shell--photo .auth-panel__foot {
+  color: var(--auth-brand-text-muted);
+}
+
+.auth-shell--photo .auth-panel__foot a {
+  color: var(--auth-brand-link);
+}
+
+.auth-shell--photo .auth-panel__foot a:hover {
+  color: var(--auth-brand-text);
+}
+
 .auth-install {
   display: flex;
   justify-content: center;

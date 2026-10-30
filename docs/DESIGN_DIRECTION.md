@@ -108,7 +108,7 @@ Ambos temas se implementan **reemplazando tokens** en `[data-theme]`; no hay CSS
 6. `--space-14` (56px) define la altura de la barra superior móvil; `--qr-bg`/`--qr-fg` garantizan que el QR de 2FA se pueda escanear en ambos temas.
 7. El manifest no puede leer CSS: `vite.config.ts` espeja `--color-bg` de `light-cobalt` para `background_color` y `theme_color`. Si cambia ese token, se actualizan ambos valores. El `theme-color` en runtime sí se sincroniza desde el token.
 8. Los tokens `--preview-*` existen solo para dibujar los swatches del selector de tema, porque necesita mostrar las cuatro paletas al mismo tiempo.
-9. `--auth-photo` apunta a `frontend/public/images/fondo-notas.jpg` y `--auth-photo-veil` es un velo neutro común. Como la foto es clara, el texto de marca usa `--auth-brand-text`, `--auth-brand-text-muted`, `--auth-brand-accent` y `--auth-brand-focus` con tinta oscura también en temas oscuros. Esos tokens se aplican solo a la columna de marca: la tarjeta del formulario mantiene `--card-bg`, su superficie en móvil y los colores semánticos normales de texto y enlaces, para conservar AA. No se usa CSS condicional por tema.
+9. `--auth-photo` apunta a `frontend/public/images/fondo-notas.jpg` y `--auth-photo-veil` es un velo neutro común. Como la foto es clara, todo lo que se apoya sobre ella (columna de marca y pie del formulario) usa `--auth-brand-text`, `--auth-brand-text-muted`, `--auth-brand-accent`, `--auth-brand-link` y `--auth-brand-focus` con tinta oscura también en temas oscuros. La tarjeta mantiene `--card-bg` y sus controles usan los colores semánticos normales, para conservar AA sin CSS condicional por tema.
 
 ## Estados de producto
 
